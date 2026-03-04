@@ -1,6 +1,6 @@
 import BkTranslate from './tags/translation/BkTranslate.vue'
 import BkLabel from './tags/forms/BkLabel.vue'
-import { setBkUIContext, Bk, Class, I18n, Role, autorun, isClient, toast } from './bridge/context'
+import { setBkUIContext, Bk, Class, I18n, Role, autorun, Meteor, isClient } from './bridge/context'
 
 const BKUI_SYMBOL = Symbol('bkui')
 
@@ -32,5 +32,5 @@ const BkUI = {
 }
 
 export { BkUI, BkTranslate, BkLabel, BKUI_SYMBOL }
-export { Bk, Class, I18n, Role, autorun, isClient, toast }
+export { Bk, Class, I18n, Role, autorun, isClient, Meteor }
 export default BkUI

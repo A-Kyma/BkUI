@@ -30,7 +30,10 @@ import { autorun } from 'vue-meteor-tracker'
 import { Role, I18n, Bk } from 'meteor/akyma:bk'
 import { useQuasar } from 'quasar'
 
-app.use(BkUI, {Bk, isClient: () => Meteor.isClient, I18n, Role, Class})
+app.use(BkUI, {Bk, Meteor, I18n, Role, Class})
+// or
+app.use(BkUI, {Bk, Meteor, isClient: () => Meteor.isClient, I18n, Role, Class})
+
 ```
 
 ## Build

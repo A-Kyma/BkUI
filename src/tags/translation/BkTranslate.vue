@@ -4,8 +4,8 @@
 
 <script setup>
 import { computed, inject, ref, useSlots } from 'vue'
-import { BKUI_SYMBOL } from '../../index'
-import { Class, I18n, Role, autorun, isClient, toast } from '../../bridge/context'
+//import { BKUI_SYMBOL } from '../../index'
+import { Class, I18n, Role, autorun, isClient, Meteor } from '../../bridge/context'
 
 defineOptions({ name: 't' })
 
@@ -20,7 +20,7 @@ const props = defineProps({
 })
 
 const slots = useSlots()
-const deps = inject(BKUI_SYMBOL, {})
+//const deps = inject(BKUI_SYMBOL, {})
 
 const getKeyFromSlot = () => {
   const defaultSlot = slots.default?.()
@@ -37,10 +37,9 @@ const getKeyFromSlot = () => {
 }
 
 const key = computed(() => {
-  const C = deps?.Class || Class
   if (props.model && props.field && C) {
     if (typeof props.model === 'string') {
-      return C.get(props.model).getLabelKey(props.field)
+      return Class.get(props.model).getLabelKey(props.field)
     }
     return props.model.constructor.getLabelKey(props.field)
   }
@@ -50,17 +49,14 @@ const key = computed(() => {
 const translationRef = ref('')
 
 const computeTranslation = () => {
-  const i18n = deps?.I18n || I18n
-  if (!i18n || !key.value) return ''
+  if (!I18n || !key.value) return ''
   const options = { ...props.options }
   if (props.locale) options.locale = props.locale
-  return i18n.t(key.value, options)
+  return I18n.t(key.value, options)
 }
 
-const runAutorun = deps?.autorun || autorun
-
-if (typeof runAutorun === 'function') {
-  runAutorun(() => {
+if (typeof autorun === 'function') {
+  autorun(() => {
     translationRef.value = computeTranslation()
   })
   translationRef.value = computeTranslation()
@@ -71,28 +67,28 @@ if (typeof runAutorun === 'function') {
 const translation = computed(() => translationRef.value)
 
 const showKey = (e) => {
-  if (!isClient()) return
+  if (!Meteor.isClient()) return
   e.preventDefault()
-  const role = deps?.Role || Role
-  const i18n = deps?.I18n || I18n
-  if (!role || !role.is?.('SuperAdministrator')) return
-  if (!i18n) return
+  
+  if (!Role || !Role.is?.('SuperAdministrator')) return
+  if (!I18n) return
 
-  const locale = i18n.getLanguage()
+  const locale = I18n.getLanguage()
   const translationKey = key.value
 
-  let t = i18n.findOne({ locale, key: translationKey })
+  let t = I18n.findOne({ locale, key: translationKey })
   if (!t) {
-    t = new i18n({ locale, key: translationKey, text: translation.value })
+    t = new I18n({ locale, key: translationKey, text: translation.value })
   }
   if (t.text.includes('.')) {
     t.text = ''
   }
 
-  const toastInstance = deps?.toast?.() || toast?.()
-  toastInstance?.toast?.({
-    title: 'Translation',
-    body: () => `<bk-form :model=\"model\" :toast=\"true\"></bk-form>`
-  })
+  // => Should use a toast from Quasar
+  // const toastInstance = deps?.toast?.() || toast?.()
+  // toastInstance?.toast?.({
+  //   title: 'Translation',
+  //   body: () => `<bk-form :model=\"model\" :toast=\"true\"></bk-form>`
+  // })
 }
 </script>

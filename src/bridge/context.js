@@ -1,12 +1,11 @@
-import { autorun as meteorAutorun } from 'vue-meteor-tracker'
+import { autorun } from 'vue-meteor-tracker'
 
 let Bk
 let Class
 let I18n
 let Role
-let autorun = meteorAutorun
+let Meteor
 let isClient
-let toast
 
 const setBkUIContext = (deps = {}) => {
   if (deps.Bk) Bk = deps.Bk
@@ -19,9 +18,12 @@ const setBkUIContext = (deps = {}) => {
   if (deps.Role) Role = deps.Role
   if (!Role && Bk?.Role) Role = Bk.Role
 
-  if (deps.autorun) autorun = deps.autorun
   if (deps.isClient !== undefined) isClient = deps.isClient
-  if (deps.toast) toast = deps.toast
+
+  if (deps.Meteor) Meteor = deps.Meteor
+  if (isClient === undefined) {
+    if (deps.Meteor?.isClient !== undefined) isClient = deps.Meteor.isClient
+  }
 }
 
 export {
@@ -30,7 +32,7 @@ export {
   I18n,
   Role,
   autorun,
+  Meteor,
   isClient,
-  toast,
   setBkUIContext
 }
