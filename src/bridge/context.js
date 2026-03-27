@@ -6,6 +6,10 @@ let I18n
 let Role
 let Meteor
 let isClient
+let Datatable
+let Lifecycle
+let ListField
+let Enum
 
 const setBkUIContext = (deps = {}) => {
   if (deps.Bk) Bk = deps.Bk
@@ -24,6 +28,18 @@ const setBkUIContext = (deps = {}) => {
   if (isClient === undefined) {
     if (deps.Meteor?.isClient !== undefined) isClient = deps.Meteor.isClient
   }
+
+  if (deps.Datatable) Datatable = deps.Datatable
+  if (!Datatable && Bk?.Datatable) Datatable = Bk.Datatable
+
+  if (deps.Lifecycle) Lifecycle = deps.Lifecycle
+  if (!Lifecycle && Bk?.Lifecycle) Lifecycle = Bk.Lifecycle
+  
+  if (deps.Enum) Enum = deps.Enum
+  if (!Enum && Bk?.Enum) Enum = Bk.Enum
+
+  if (deps.ListField) ListField = deps.ListField
+  if (!ListField && Bk?.ListField) ListField = Bk.ListField
 }
 
 export {
@@ -33,6 +49,10 @@ export {
   Role,
   autorun,
   Meteor,
+  Datatable,
+  Lifecycle,
+  Enum,
+  ListField,
   isClient,
   setBkUIContext
 }
