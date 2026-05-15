@@ -1,39 +1,56 @@
 <template>
-  <b-dropdown :text="dropdownText">
-    <b-dropdown-item v-for="item in options" :data-value="item.value" @click="onClick">
-      {{item.text}}
-    </b-dropdown-item>
-  </b-dropdown>
+  <q-btn-dropdown :label="dropdownText" color="primary" outline>
+    <q-list>
+      <q-item
+        v-for="item in options"
+        :key="item.value"
+        clickable
+        v-close-popup
+        @click="onClick(item)"
+      >
+        <q-item-section>{{ item.text }}</q-item-section>
+      </q-item>
+    </q-list>
+  </q-btn-dropdown>
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
-import I18n from "../../../../lib/classes/i18n";
-import {_} from "lodash";
+import { Class } from '../../bridge/context'
 
 export default {
-  name: "BkDropdown",
+  name: 'BkDropdown',
   props: {
-    model: Class,
+    model: {
+      type: Class || Object,
+      validator(value) {
+        if (!Class) return true
+        return value instanceof Class
+      }
+    },
     field: String,
-    options: Array,
+    options: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
   },
   computed: {
     dropdownText() {
-      let value = this.model[this.field];
+      const value = this.model?.[this.field]
       if (value) {
-        let translatedElem = this.options.find(elem => elem.value === value);
-        if (translatedElem) { return translatedElem.text };
+        const translatedElem = this.options.find((elem) => elem.value === value)
+        if (translatedElem) return translatedElem.text
       }
-      return "Choose";
+      return 'Choose'
     }
   },
   methods: {
-    onClick(e) {
-      let elem = this.options.find(x => x.text === e.target.innerText)
-      this.model[this.field] = elem.value;
+    onClick(item) {
+      if (!this.model || !this.field || !item) return
+      this.model[this.field] = item.value
     }
-  },
+  }
 }
 </script>
 

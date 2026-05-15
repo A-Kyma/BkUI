@@ -1,51 +1,58 @@
 <template>
   <span v-if="$props.for==='lifecycle'">
-    <b-link
+    <q-btn
         v-for="transition in transitions"
         @click="onClick(transition,$event)"
+        flat
+        round
+        dense
         :class="(transition.label) ? 'btn':''"
-        :alt="transition.alt">
+        :aria-label="transition.alt">
       <slot>
-        <b-button
+        <q-btn
           v-if="button"
           :class="transition.class"
-          :variant="transition.variant"
+          :color="transition.variant"
+          flat
         >
-          <b-icon :icon="transition.icon" :animation="transition.animation" aria-hidden="true"/>
+          <q-icon :name="transition.icon" :class="transition.animation ? 'q-ml-xs' : ''" aria-hidden="true"/>
           <t v-if="transition.label" :key="transition.label">{{transition.label}}</t>
-        </b-button>
+        </q-btn>
 
-        <b-icon
+        <q-icon
             v-else
             :class="'BkButton ' + iconClass"
             :font-scale="fontScale"
-            :icon="transition.icon"
-            :variant="transition.variant"
+            :name="transition.icon"
+            :color="transition.variant"
         />
         <t v-if="!button && transition.label" :key="transition.label">{{transition.label}}</t>
       </slot>
-    </b-link>
+    </q-btn>
   </span>
-  <b-link
+  <q-btn
       v-else-if="computedPermission"
       @click="onClick(null,$event)"
-      :alt="label"
+      flat
+      round
+      dense
+      :aria-label="label"
       :title="title"
   >
     <slot>
       <span v-if="computedIcon && !button && !buttonIcon" :class="textNoWrap">
-        <b-icon v-if="noTransform" :class="'mr-1' + iconClass" :scale="scale" :font-scale="fontScale" :icon="computedIcon" :variant="computedVariant"/>
-        <b-icon v-else :class="'BkButton ' + iconClass" :scale="scale" :font-scale="fontScale" :icon="computedIcon" :variant="computedVariant"/>
+        <q-icon v-if="noTransform" :class="'mr-1' + iconClass" :name="computedIcon" :color="computedVariant"/>
+        <q-icon v-else :class="'BkButton ' + iconClass" :name="computedIcon" :color="computedVariant"/>
         <t v-if="label" :key="label">{{label}}</t>
       </span>
-      <b-button v-else-if="computedIcon && buttonIcon" :class="iconClass">
-        <b-icon v-if="noTransform" :class="'mr-1' + iconClass" :scale="scale" :font-scale="fontScale" :icon="computedIcon" :variant="computedVariant"/>
-        <b-icon v-else :class="'BkButton ' + iconClass" :scale="scale" :font-scale="fontScale" :icon="computedIcon" :variant="computedVariant"/>
+      <q-btn v-else-if="computedIcon && buttonIcon" :class="iconClass" flat>
+        <q-icon v-if="noTransform" :class="'mr-1' + iconClass" :name="computedIcon" :color="computedVariant"/>
+        <q-icon v-else :class="'BkButton ' + iconClass" :name="computedIcon" :color="computedVariant"/>
         <t :key="label">{{label}}</t>
-      </b-button>
-      <b-button v-else :class="iconClass" :variant="computedVariant">
+      </q-btn>
+      <q-btn v-else :class="iconClass" :color="computedVariant" flat>
         <t :key="label">{{label}}</t>
-      </b-button>
+      </q-btn>
       <bk-modal :id="modalImportId"
                 v-if="$props['for'] === 'import'"
                 :model="model"
@@ -56,125 +63,124 @@
         <template v-slot:title>
           <t>{{model}}.import.title</t>
         </template>
-        <b-button
+        <q-btn
             :class="visible ? null : 'collapsed'"
-            :aria-expanded="visible ? 'true' : 'false'"
-            aria-controls="collapse-1"
             @click="visible = !visible"
-            variant="primary"
-            size="sm">
+            color="primary"
+            size="sm"
+            flat>
           <t>app.import.toogleform</t>
-        </b-button>
+        </q-btn>
         <div class="h-divider"/>
-        <b-collapse visible id="collapse-1" v-model="visible" >
+        <div v-show="visible" id="collapse-1">
           <div>
             <h6><t>app.import.fileformat.title</t></h6>
-            <b-form id="form-csv-link" inline>
-              <b-input-group v-if="getImportFileType !== 'xls'" :prepend="getI18n('app.import.column.separator')" class="mb-2 mr-sm-2">
-                <b-form-input style="width: 70px" v-model="separator" id="inline-form-input-separator" :placeholder="getI18n('app.import.column.default.placeholder')"></b-form-input>
-              </b-input-group>
-              <b-input-group :prepend="getI18n('app.import.list.separator')" class="mb-2 mr-sm-2">
-                <b-form-input
+            <form id="form-csv-link" class="q-gutter-sm">
+              <div v-if="getImportFileType !== 'xls'" class="q-mb-sm">
+                <q-input dense outlined style="width: 70px" v-model="separator" id="inline-form-input-separator" :placeholder="getI18n('app.import.column.default.placeholder')"/>
+              </div>
+              <div class="q-mb-sm">
+                <q-input
+                  dense
+                  outlined
                   style="width: 70px"
                   v-model="listSeparator"
                   id="inline-form-input-listseparator"
                   :placeholder="getI18n('app.import.list.default.placeholder')"
                   :readonly="getImportFileType === 'xls'"
                 />
-              </b-input-group>
-              <b-input-group class="col-12 mb-2">
-                <b-form-checkbox id="inline-form-checkbox-oneDateTimeFormat" v-model="oneDateTime" name="checkbox-1" value="accepted" unchecked-value="not_accepted">
+              </div>
+              <div class="q-mb-sm col-12">
+                <q-checkbox id="inline-form-checkbox-oneDateTimeFormat" v-model="oneDateTime" true-value="accepted" false-value="not_accepted">
                   <t>app.import.onedatetime.format</t>
-                </b-form-checkbox>
-              </b-input-group>
-              <b-input-group v-if="oneDateTime === 'accepted'" :prepend="getI18n('app.import.datetime.format')" class="mb-2 mr-sm-2">
-                <b-form-input style="width: 200px" v-model="dateTimeFormat" id="inline-form-input-dateTimeFormat" :placeholder="getI18n('app.import.datetime.default.placeholder')"></b-form-input>
-              </b-input-group>
-              <b-input-group v-if="oneDateTime !== 'accepted'" class="mb-2 mr-sm-2 w-100">
+                </q-checkbox>
+              </div>
+              <div v-if="oneDateTime === 'accepted'" class="q-mb-sm">
+                <q-input dense outlined style="width: 200px" v-model="dateTimeFormat" id="inline-form-input-dateTimeFormat" :placeholder="getI18n('app.import.datetime.default.placeholder')"/>
+              </div>
+              <div v-if="oneDateTime !== 'accepted'" class="q-mb-sm w-100">
               <p style="color: darkred; margin-bottom: 0px"> <t>app.import.dateformat.info</t></p>
-              </b-input-group>
-              <b-input-group v-if="oneDateTime !== 'accepted'" :prepend="getI18n('app.import.date.format')" class="mb-2 mr-sm-2">
-                <b-form-input style="width: 150px" v-model="dateFormat" id="inline-form-input-dateFormat" :placeholder="getI18n('app.import.date.default.placeholder')"></b-form-input>
-              </b-input-group>
-              <b-input-group v-if="oneDateTime !== 'accepted'" :prepend="getI18n('app.import.time.format')" class="mb-2 mr-sm-2">
-                <b-form-input style="width: 150px" v-model="timeFormat" id="inline-form-input-timeFormat" :placeholder="getI18n('app.import.time.default.placeholder')"></b-form-input>
-              </b-input-group>
-              <b-button
+              </div>
+              <div v-if="oneDateTime !== 'accepted'" class="q-mb-sm">
+                <q-input dense outlined style="width: 150px" v-model="dateFormat" id="inline-form-input-dateFormat" :placeholder="getI18n('app.import.date.default.placeholder')"/>
+              </div>
+              <div v-if="oneDateTime !== 'accepted'" class="q-mb-sm">
+                <q-input dense outlined style="width: 150px" v-model="timeFormat" id="inline-form-input-timeFormat" :placeholder="getI18n('app.import.time.default.placeholder')"/>
+              </div>
+              <q-btn
                   :class="visibleDateFormat ? 'mb-2' : 'collapsed mb-2'"
-                  :aria-expanded="visibleDateFormat ? 'true' : 'false'"
-                  aria-controls="collapse-2"
                   @click="visibleDateFormat = !visibleDateFormat"
-                  variant="primary"
-                  size="sm">
+                  color="primary"
+                  size="sm"
+                  flat>
                 <t>app.import.dateformat.show</t>
-              </b-button>
-              <b-collapse visible id="collapse-2" v-model="visibleDateFormat" >
-                <b-alert show class="w-100">
-                  <b-table-simple small class="mb-0">
-                    <b-tr>
-                      <b-th class="bc"><t>app.import.dateformat.year</t></b-th>
-                      <b-th class="bc"><t>app.import.dateformat.month</t></b-th>
-                      <b-th class="bc"><t>app.import.dateformat.day</t></b-th>
-                      <b-th class="bc"><t>app.import.dateformat.hour</t></b-th>
-                      <b-th class="bc"><t>app.import.dateformat.minute</t></b-th>
-                      <b-th class="bc"><t>app.import.dateformat.other</t></b-th>
-                    </b-tr>
-                    <b-tr>
-                      <b-td class="bc">YYYY</b-td>
-                      <b-td class="bc">MM</b-td>
-                      <b-td class="bc">DD</b-td>
-                      <b-td class="bc">HH</b-td>
-                      <b-td class="bc">mm</b-td>
-                      <b-td class="bc">x</b-td>
-                    </b-tr>
-                  </b-table-simple>
-                  <t>app.import.dateformat.example</t>: SA 30/04/2022 10:30 -> xxxDD/MM/YYYYxHH:mm
-                </b-alert>
-              </b-collapse>
-              <b-input-group class="col-12 mb-2">
-                <b-form-checkbox id="inline-form-checkbox-testOnly" v-model="testOnly" name="checkbox-1" value="accepted" unchecked-value="not_accepted">
+              </q-btn>
+              <div v-show="visibleDateFormat" class="q-pa-sm bg-grey-2 w-100">
+                <q-card flat bordered>
+                  <q-card-section>
+                    <div class="row">
+                      <div class="col"><t>app.import.dateformat.year</t></div>
+                      <div class="col"><t>app.import.dateformat.month</t></div>
+                      <div class="col"><t>app.import.dateformat.day</t></div>
+                      <div class="col"><t>app.import.dateformat.hour</t></div>
+                      <div class="col"><t>app.import.dateformat.minute</t></div>
+                      <div class="col"><t>app.import.dateformat.other</t></div>
+                    </div>
+                    <div class="row">
+                      <div class="col">YYYY</div>
+                      <div class="col">MM</div>
+                      <div class="col">DD</div>
+                      <div class="col">HH</div>
+                      <div class="col">mm</div>
+                      <div class="col">x</div>
+                    </div>
+                    <div class="q-mt-sm"><t>app.import.dateformat.example</t>: SA 30/04/2022 10:30 -> xxxDD/MM/YYYYxHH:mm</div>
+                  </q-card-section>
+                </q-card>
+              </div>
+              <div class="q-mb-sm col-12">
+                <q-checkbox id="inline-form-checkbox-testOnly" v-model="testOnly" true-value="accepted" false-value="not_accepted">
                   <t>app.import.testOnly</t>
-                </b-form-checkbox>
-              </b-input-group>
+                </q-checkbox>
+              </div>
               <h6 style="width: 100%"><t>app.import.filecolumns.title</t></h6>
-              <b-input-group v-for="item in getImportModelFields" :prepend="item.label" class="mb-2 mr-sm-2">
-                <b-form-input style="width: 120px" v-model="csvColumns[item.name]" :id="'inline-form-input-'+item.name" type="number" :placeholder="item.placeholder"></b-form-input>
-              </b-input-group>
-            </b-form>
+              <div v-for="item in getImportModelFields" :key="item.name" class="q-mb-sm">
+                <q-input dense outlined style="width: 120px" v-model="csvColumns[item.name]" :id="'inline-form-input-'+item.name" type="number" :placeholder="item.placeholder"/>
+              </div>
+            </form>
           </div>
-          <b-form id="form-csv-upload" >
-            <b-form-file
+          <form id="form-csv-upload" >
+            <q-file
                 ref="file-input"
                 :accept="getExtension"
-                :browse-text="getI18n('app.import.file.browse')"
                 v-model="importFile"
-                :placeholder="getI18n('app.import.file.placeholder')"
-                :drop-placeholder="getI18n('app.import.file.drop')"
+                :label="getI18n('app.import.file.placeholder')"
+                outlined
+                dense
             />
 
-            <b-form-checkbox
+            <q-checkbox
                 id="headerPresent"
                 v-model="header"
-                name="headerPresent"
-                value="accepted"
-                unchecked-value="not_accepted"
+                true-value="accepted"
+                false-value="not_accepted"
             >
               <t>app.import.file.switchheader</t>
-            </b-form-checkbox>
-          </b-form>
+            </q-checkbox>
+          </form>
           <div class="h-divider"/>
         </b-collapse>
 
-        <b-container class=" pt-3" id="result-import">
+        <div class="pt-3" id="result-import">
           <div v-if="error !== null">
-            <b-alert show variant="danger">{{ error }}</b-alert>
+            <q-banner class="bg-red-2 text-red" dense>{{ error }}</q-banner>
           </div>
-          <b-alert v-if="result.length > 0" v-for="item in result" show variant="light">
+          <q-banner v-if="result.length > 0" v-for="item in result" :key="item.statusLabel" class="q-mb-sm bg-grey-2">
             <div>
               <span v-for="field in item.fields">{{ field }} </span>
-              <b-badge class= " float-right badge-lg" v-if="item.statusCode === 'success'" variant="success">{{ item.statusLabel }}</b-badge>
-              <b-badge class= " float-right badge-lg" v-if="item.statusCode === 'error'" variant="danger">{{ item.statusLabel }}</b-badge>
-              <b-badge class= " float-right badge-lg" v-if="item.statusCode === 'warning'" variant="warning">{{ item.statusLabel }}</b-badge>
+              <q-badge v-if="item.statusCode === 'success'" color="positive" class="float-right">{{ item.statusLabel }}</q-badge>
+              <q-badge v-if="item.statusCode === 'error'" color="negative" class="float-right">{{ item.statusLabel }}</q-badge>
+              <q-badge v-if="item.statusCode === 'warning'" color="warning" class="float-right">{{ item.statusLabel }}</q-badge>
             </div>
             <div v-if="item.statusCode === 'error'" style="color: darkred">
               {{ item.reason }}
@@ -182,16 +188,16 @@
             <div v-if="item.statusCode === 'warning'">
               {{ item.reason }}
             </div>
-          </b-alert>
-        </b-container>
-        <b-button
+          </q-banner>
+        </div>
+        <q-btn
             v-if="importFile !== null"
             class="mt-2"
-            variant="success"
+            color="positive"
             @click="onSubmitImportModal"
         >
           <t>app.import.btn.label</t>
-        </b-button>
+        </q-btn>
 
       </bk-modal>
       <bk-modal :id="modalAddId"

@@ -1,53 +1,49 @@
 <template>
-    <b-breadcrumb>
-        <b-breadcrumb-item to="/">
-            <b-icon icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
+    <q-breadcrumbs>
+        <q-breadcrumbs-el :to="'/'">
+            <q-icon name="home" class="q-mr-xs" />
             <t>route.home.title</t>
-        </b-breadcrumb-item>
-        <b-breadcrumb-item v-for="item in RouteArray" active>
+        </q-breadcrumbs-el>
+        <q-breadcrumbs-el v-for="item in routeArray" :key="item">
             <t>{{ item }}</t>
-        </b-breadcrumb-item>
-    </b-breadcrumb>
+        </q-breadcrumbs-el>
+    </q-breadcrumbs>
 </template>
 <script>
+export default {
+    name: 'BkBreadCrumb',
+    computed: {
+        routeArray() {
+            if (!this.$route?.matched?.length) return []
 
-    export default {
-        name: "BkBreadCrumb",
-        computed: {
-            RouteArray() {
-                if (this.$route.matched.length > 0){
-                    let routeStr = this.$route.matched[0].path.substring(1);
-                    let param = this.$route.params
-                    let title = this.$route.meta.title
-                    if (routeStr !== ""){
-                        let routeArr = routeStr.split("/");
-                        if (routeArr.length > 0){
-                            for (let i = 0; i < routeArr.length; i++) {
-                                if (routeArr[i].indexOf(":") > -1){
-                                    if(routeArr[i] === ":id"){
-                                        if (title.indexOf(".") > -1){
-                                            routeArr[i] = title
-                                        }else{
-                                            routeArr[i] = "route." + title + ".title"
-                                        }
+            const routeStr = this.$route.matched[0].path.substring(1)
+            const param = this.$route.params || {}
+            const title = this.$route.meta?.title || ''
 
-                                    }else{
-                                        let paramValue = param[routeArr[i].replace(":","")]
-                                        routeArr[i] = "route." + paramValue + ".title"
-                                    }
-                                }else{
-                                    routeArr[i] = "route." + routeArr[i] + ".title"
-                                }
-                            }
-                            return routeArr;
+            if (!routeStr) return []
+            const routeArr = routeStr.split('/')
+
+            for (let i = 0; i < routeArr.length; i++) {
+                if (routeArr[i].indexOf(':') > -1) {
+                    if (routeArr[i] === ':id') {
+                        if (title.indexOf('.') > -1) {
+                            routeArr[i] = title
+                        } else {
+                            routeArr[i] = 'route.' + title + '.title'
                         }
+                    } else {
+                        const paramValue = param[routeArr[i].replace(':', '')]
+                        routeArr[i] = 'route.' + paramValue + '.title'
                     }
+                } else {
+                    routeArr[i] = 'route.' + routeArr[i] + '.title'
                 }
-
             }
-        },
+
+            return routeArr
     }
+    }
+}
 </script>
 <style scoped>
-
 </style>

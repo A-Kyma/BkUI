@@ -1,52 +1,64 @@
 <template>
   <div>
-    <b-form-input
-        v-bind="$attrs"
-        v-model="inputValue"
-        :state="state"
-        :list="datalistId"
+    <q-input
+      v-bind="$attrs"
+      v-model="inputValue"
+      :list="datalistId"
+      outlined
+      dense
     />
-    <!-- TODO use collapse + selectable table instead -->
-    <b-form-datalist :id="datalistId" :options="options"/>
+    <datalist :id="datalistId">
+      <option v-for="option in datalistOptions" :key="option" :value="option" />
+    </datalist>
   </div>
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
-import I18n from "../../../../lib/classes/i18n";
-import {_} from "lodash";
+import { Class } from '../../bridge/context'
 
 export default {
-  name: "BkDatalistInput",
+  name: 'BkDatalistInput',
   props: {
-    model: Class,
+    model: {
+      type: Class || Object,
+      validator(value) {
+        if (!Class) return true
+        return value instanceof Class
+      }
+    },
+    options: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
   },
   data() {
     return {
-      value: this.model.defaultName(),
-      options: []
+      value: this.model?.defaultName?.() || ''
     }
   },
   computed: {
-    /*
-    options() {
-      // Todo : return available values using Method
-      return this.model.searchCity(this.value, I18n.getLanguage())
+    datalistOptions() {
+      return this.options.map((option) => {
+        if (typeof option === 'string') return option
+        if (option?.text) return option.text
+        if (option?.label) return option.label
+        return String(option?.value ?? '')
+      }).filter(Boolean)
     },
-    */
 
     inputValue: {
       set(value) {
-        let self = this;
-        this.fillOptions(value)
-        this.value = value;
+        this.value = value
+        this.$emit('input', value)
       },
       get() {
-        return this.value;
+        return this.value
       }
     },
     datalistId() {
-      return "datalist_" + this.model._id;
+      return 'datalist_' + (this.model?._id || 'new')
     }
   }
 }

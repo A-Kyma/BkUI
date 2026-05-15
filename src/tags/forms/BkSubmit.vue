@@ -1,58 +1,64 @@
 <template>
-    <div class="mt-2">
-        <b-button
-                v-if="$props['for'] !== 'view' && !excludeButtons.includes('submit')"
-                type="submit"
-                variant="outline-primary">
-            <t :key="submit">{{submit}}</t>
-        </b-button>
-        <b-button
-                v-if="$props['for'] !== 'view' && !toast && !excludeButtons.includes('reset')"
-                type="reset"
-                variant="outline-danger">
-          <t>app.reset</t>
-        </b-button>
-        <b-button
-                v-if="!toast && !excludeButtons.includes('cancel')"
-                type="button"
-                @click="onCancel"
-                variant="outline-secondary">
-          <t>app.cancel</t>
-        </b-button>
-      <slot name="after-submit"/>
-    </div>
+  <div class="q-mt-sm row q-gutter-sm items-center">
+    <q-btn
+      v-if="for !== 'view' && !excludeButtons.includes('submit')"
+      type="submit"
+      color="primary"
+      outline
+    >
+      <t :key="submit">{{ submit }}</t>
+    </q-btn>
+
+    <q-btn
+      v-if="for !== 'view' && !toast && !excludeButtons.includes('reset')"
+      type="reset"
+      color="negative"
+      outline
+    >
+      <t>app.reset</t>
+    </q-btn>
+
+    <q-btn
+      v-if="!toast && !excludeButtons.includes('cancel')"
+      type="button"
+      color="grey-7"
+      outline
+      @click="onCancel"
+    >
+      <t>app.cancel</t>
+    </q-btn>
+
+    <slot name="after-submit"/>
+  </div>
 </template>
 
 <script>
-  import {Class} from 'meteor/akyma:astronomy';
-
-  export default {
-    name: "BkSubmit",
-      props: {
-        for: String,
-        toast: Boolean,
-        excludeButtons: { type: Array, default() {return []}},
-      },
-    computed: {
-      name() {
-        return this.data;
-      },
-      submit() {
-        if (this.for) {
-          return "app." + this.for;
-        }
-        return "app.submit";
+export default {
+  name: 'BkSubmit',
+  props: {
+    for: String,
+    toast: Boolean,
+    excludeButtons: {
+      type: Array,
+      default() {
+        return []
       }
-    },
-    methods: {
-      onCancel(e) {
-        this.$emit('cancel',e);
-      }
-    },
-    meteor: {
-
     }
+  },
+  computed: {
+    submit() {
+      if (this.for) {
+        return 'app.' + this.for
+      }
+      return 'app.submit'
+    }
+  },
+  methods: {
+    onCancel(e) {
+      this.$emit('cancel', e)
+    },
   }
+}
 </script>
 
 <style scoped>

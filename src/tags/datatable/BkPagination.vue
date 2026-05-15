@@ -1,46 +1,40 @@
 <template>
-      <div v-if="datatable.getCount()===0">
-        <div class="text-center">
-          <p><t>app.noData</t></p>
+  <div v-if="datatable.getCount() === 0" class="text-center">
+    <p><t>app.noData</t></p>
+  </div>
+  <div v-else>
+    <div v-if="scroll">
+      <div v-if="viewScrollButton" class="text-center">
+        <div v-if="datatable.handler?.ready?.()">
+          <q-btn ref="seeMoreLink" color="primary" @click="seeMore">
+            <t>app.seeMore</t>
+          </q-btn>
         </div>
+        <slot v-else name="loading-bottom" v-bind="{ datatable, scroll, perPage }">
+          <bk-loading/>
+        </slot>
       </div>
-      <div v-else>
-        <div v-if="scroll">
-          <div v-if="viewScrollButton">
-            <div class="text-center">
-              <div v-if="datatable.handler.ready()" class="btn btn-primary">
-                <a @click="seeMore()" ref="seeMoreLink">
-                  <t key="app.seeMore">app.seeMore</t>
-                </a>
-              </div>
-              <slot v-else name="loading-bottom" v-bind="{datatable, scroll, perPage}">
-                <bk-loading/>
-              </slot>
-            </div>
-          </div>
-        </div>
-        <div v-else>
-          <b-pagination
-              :key="datatable.page"
-              @input="paginate"
-              v-model="datatable.page"
-              :total-rows="total"
-              :per-page="perPage"
-              class="mt-1 mb-1"
-          ></b-pagination>
-        </div>
-      </div>
+    </div>
+    <div v-else class="q-mt-sm q-mb-sm flex justify-center">
+      <q-pagination
+        :model-value="datatable.page"
+        :max="pages"
+        max-pages="8"
+        boundary-numbers
+        @update:model-value="paginate"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
-import I18n from "../../../../lib/classes/i18n";
 /**
  * This component allows to create a pagination in the datatable
  * used only in the datatable component
  * ex: <bk-pagination :datatable="datatable" :scroll="scroll" :perPage="perPage" :updateRoute="updateRoute" :count="count"/>
  */
 export default {
-  name: "BkPagination",
+  name: 'BkPagination',
   props: {
     // Datatable object (init from datatable.js). can be find in `'%root%/lib/classes'`
     datatable: {
@@ -66,9 +60,8 @@ export default {
       required: true
     }
   },
-  data(){
-    return {
-    }
+  data() {
+    return { observer: null }
   },
   computed: {
     // @vuese
@@ -76,24 +69,24 @@ export default {
     total() {
       if (!isNaN(this.count)) return this.count
       return this.datatable.getCount()
-    }
-  },
-  meteor: {
+    },
+    pages() {
+      if (!this.perPage || this.perPage <= 0) return 1
+      const value = Math.ceil(this.total / this.perPage)
+      return value > 0 ? value : 1
+    },
     // @vuese
     // check if the scroll button needs to be showed
     viewScrollButton() {
-      return (this.datatable.getCount() > this.datatable.getCountLocal())
-    },
-  },
-  data(){
-    return { observer: null }
+      return this.datatable.getCount() > this.datatable.getCountLocal()
+    }
   },
   mounted() {
     // set up an IntersectionObserver to detect visibility of the "see more" link
-    const el = this.$refs.seeMoreLink
+    const el = this.$refs.seeMoreLink?.$el || this.$refs.seeMoreLink
     if (el && typeof IntersectionObserver !== 'undefined') {
-      this.observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) this.seeMore()
         })
       }, { threshold: 0.5 })
@@ -109,20 +102,19 @@ export default {
   methods: {
     // @vuese
     // set a new page in case of scroll
-    seeMore(){
-      let page = this.datatable.page
+    seeMore() {
+      const page = this.datatable.page
       this.datatable.setPage(page + 1)
     },
     // @vuese
     // set a new page in case of pagination
     paginate(page) {
       this.datatable.setPage(page)
-      this.$emit("page-click",page)
+      this.$emit('page-click', page)
     }
   }
 }
 </script>
 
 <style scoped>
-
 </style>

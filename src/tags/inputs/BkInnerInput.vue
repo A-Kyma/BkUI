@@ -1,11 +1,9 @@
 <template>
 
-  <b-input-group
+  <div
     v-bind="$attrs"
     v-dragscroll.x="true"
     v-dragscroll.y="false"
-    :prepend="prepend"
-    :append="append"
     :class="inputGroupClass"
     :key="definitionKey"
   >
@@ -19,7 +17,7 @@
       <bk-field-list
               v-if="definitionField === 'Object'"
               v-bind="{...$props,...$attrs,...uiComponentProps, plaintext: plaintextComputed }"
-              class="col-12"
+              class="full-width"
               :model="model.get(field)"
               :form-field="formFieldComputed"
               @change="$emit('change')"
@@ -40,67 +38,69 @@
         </template>
       </bk-card-list-class>
 
-      <b-form-checkbox-group
+      <div
           v-else-if="definitionField === 'ListEnum' && !ui.template"
-          v-bind="{...$props,...$attrs,...uiComponentProps}"
+          class="q-gutter-md bk-plaintext">
+        <q-checkbox
+          v-for="item in enumOptions"
+          :key="item.value"
           v-model="value"
-          :name="field"
-          :disabled="plaintextComputed"
-          class="form-control-plaintext">
-        <b-form-checkbox v-for="item in enumOptions"
-                         :value="item.value" :key="item.value">
-          <t>{{item.key}}</t>
-        </b-form-checkbox>
-      </b-form-checkbox-group>
+          :val="item.value"
+          :disable="plaintextComputed"
+          :label="$t(item.key)"
+        />
+      </div>
 
-      <b-img v-else-if="definitionField === 'Image'"
-             :src="value"/>
+      <img v-else-if="definitionField === 'Image'"
+             :src="value" class="img-fluid" style="max-width: 100%;"/>
 
       <!--
       Issue with radio group badly linked together when shouldn't
-      So we need to set "name" attribute as different value for each radio-group
+      So we need to set name attribute as different value for each radio-group
       -->
-      <b-form-radio-group
+      <div
           v-else-if="inputComponent === 'BFormRadioGroup' && definitionField === 'Enum'"
-          v-bind="{...$props,...$attrs,...uiComponentProps}"
+          class="q-gutter-md bk-plaintext"
+          :key="formFieldComputed">
+        <q-radio
+          v-for="item in enumOptions"
+          :key="item.value"
           v-model="value"
-          :name="formFieldComputed"
-          :key="formFieldComputed"
-          :disabled="plaintextComputed"
-          class="form-control-plaintext">
-        <b-form-radio v-for="item in enumOptions"
-                      :value="item.value" :key="item.value">
-          <t>{{item.key}}</t>
-        </b-form-radio>
-      </b-form-radio-group>
+          :val="item.value"
+          :disable="plaintextComputed"
+          :label="$t(item.key)"
+        />
+      </div>
 
-      <b-form-tags
+      <q-field
               v-else-if="definitionField === 'ListString'"
               v-bind="uiComponentProps"
-              v-model="value"
-              :state="state"
-              remove-on-delete
-              separator=" "
-              :tag-validator="tagValidator"
-              :invalid-tag-text="invalidTagText"
+              :model-value="value"
+              @update:model-value="val => value = val"
+              outlined
+              dense
+              tag="q-input"
+              :disable="plaintextComputed"
               :placeholder="placeholder"
-              :disabled="plaintextComputed"
       >
-        <template #add-button-text>
-          <t>app.add</t>
+        <template #prepend>
+          <q-icon name="label" />
         </template>
-      </b-form-tags>
+        <template #append>
+          <q-btn round dense flat icon="add" size="sm" @click.prevent="value = [...(value || []), '']" />
+        </template>
+      </q-field>
 
-      <b-form-rating
+      <q-rating
           v-else-if="definitionField === 'Rating'"
           v-bind="uiComponentProps"
-          v-model="value"
-          :variant="ui.variant"
-          :color="color"
-          :readonly="plaintextComputed"
+          :model-value="value"
+          @update:model-value="val => value = val"
           :size="size"
-          show-clear
-          icon-clear="x-circle"
+          :readonly="plaintextComputed"
+          color="primary"
+          icon="star_border"
+          icon-selected="star"
       />
 
       <bk-belongs-to-many
@@ -160,7 +160,8 @@
           :is="inputComponent"
           :class="plaintextClass"
           :type="inputType"
-          v-model="value"
+          :model-value="value"
+          @update:model-value="val => value = val"
           @paste="onPaste"
           :model="model"
           :field="field"
@@ -184,17 +185,16 @@
 
     <slot :name="'after-'+formGenericFieldComputed" v-bind="{...$props, ...{value,oldValue}}"/>
 
-  </b-input-group>
+  </div>
 </template>
 
 <script>
-import {Class, ValidationError, ScalarField, ObjectField, ListField, Union} from 'meteor/akyma:astronomy'
-import {I18n,DateTime,Enum,Lifecycle} from "meteor/akyma:bk"
-import _ from "lodash";
-import { defineAsyncComponent } from 'vue';
-import BkBelongsToInput from "./BkBelongsToInput.vue";
-import BkFieldList from "../forms/BkFieldList.vue";
-import BkCardListClass from "../forms/BkCardListClass.vue";
+import { Class, ValidationError, DateTime, I18n, Enum, Lifecycle } from '../../bridge/context'
+import _ from 'lodash'
+import { defineAsyncComponent } from 'vue'
+import BkBelongsToInput from './BkBelongsToInput.vue'
+import BkFieldList from '../forms/BkFieldList.vue'
+import BkCardListClass from '../forms/BkCardListClass.vue'
 
   function isGenericInputType(originalFieldType = "") {
     let fieldType = originalFieldType.toLowerCase();
@@ -507,7 +507,7 @@ import BkCardListClass from "../forms/BkCardListClass.vue";
         }
 
         if (fieldType === "Textarea") {
-          return "BFormTextarea"
+          return "QInput"
         }
 
         if (fieldType === "TextEditor") {
@@ -524,7 +524,7 @@ import BkCardListClass from "../forms/BkCardListClass.vue";
           if (this.plaintextComputed) {
             return "BkViewClean";
           } else {
-            return "BFormRadioGroup"
+            return "QOptionGroup"
           }
         }
 
@@ -533,21 +533,21 @@ import BkCardListClass from "../forms/BkCardListClass.vue";
         }
 
         if (fieldType === "Boolean") {
-          return "BFormCheckbox"
+          return "QCheckbox"
         }
 
-        return "BFormInput"
+        return "QInput"
       },
       plaintextClass() {
         if (this.inputComponent === "BkViewClean")
-          return "form-control-plaintext"
+          return "bk-plaintext"
         return ""
       },
       inputGroupClass() {
         let defaultClass = this.ui.class || ""
         if (this.$props['for'] === "filter"
         && (this.definitionField === 'ListEnum' && !this.ui.template
-         || this.inputComponent === 'BFormRadioGroup')
+         || this.inputComponent === 'QOptionGroup')
         )
           return defaultClass + " overflow-scroll-x"
         return defaultClass
@@ -683,5 +683,9 @@ import BkCardListClass from "../forms/BkCardListClass.vue";
 }
 .overflow-scroll-x::-webkit-scrollbar {
     display: none;
+}
+
+.bk-plaintext {
+  min-height: 1.5rem;
 }
 </style>

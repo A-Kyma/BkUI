@@ -1,7 +1,30 @@
 import BkTranslate from './tags/translation/BkTranslate.vue'
 import BkLabel from './tags/forms/BkLabel.vue'
 import BkViewClean from './tags/views/BkViewClean.vue'
-import { setBkUIContext, Bk, Class, I18n, Role, autorun, Meteor, isClient, Datatable, Lifecycle } from './bridge/context'
+import {
+  setBkUIContext,
+  Bk,
+  Class,
+  I18n,
+  Role,
+  autorun,
+  subscribe,
+  Meteor,
+  isClient,
+  Datatable,
+  Lifecycle,
+  Enum,
+  ListField,
+  DateTime,
+  Files,
+  Filter,
+  User,
+  ValidationError,
+  Accounts,
+  EJSON,
+  Tracker,
+  toast
+} from './bridge/context'
 
 const BKUI_SYMBOL = Symbol('bkui')
 
@@ -15,6 +38,15 @@ const createBkUI = (options = {}) => {
     Datatable: null,
     Lifecycle: null,
     Enum: null,
+    ListField: null,
+    DateTime: null,
+    Files: null,
+    Filter: null,
+    User: null,
+    ValidationError: null,
+    Accounts: null,
+    EJSON: null,
+    Tracker: null,
     isClient: null,
     toast: null
   }
@@ -37,5 +69,27 @@ const BkUI = {
 }
 
 export { BkUI, BkTranslate, BkLabel, BkViewClean, BKUI_SYMBOL }
-export { Bk, Class, I18n, Role, autorun, isClient, Meteor }
+export {
+  Bk,
+  Class,
+  I18n,
+  Role,
+  autorun,
+  subscribe,
+  isClient,
+  Meteor,
+  Datatable,
+  Lifecycle,
+  Enum,
+  ListField,
+  DateTime,
+  Files,
+  Filter,
+  User,
+  ValidationError,
+  Accounts,
+  EJSON,
+  Tracker,
+  toast
+}
 export default BkUI

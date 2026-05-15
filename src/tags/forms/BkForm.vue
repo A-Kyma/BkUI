@@ -1,62 +1,54 @@
 <template>
-    <b-form ref="form"
+    <form ref="form"
         v-bind="$attrs"
-        :inline="inline"
         @submit="onSubmit"
         @keyup.ctrl.enter="onSubmit"
         @keyup.meta.enter="onSubmit"
-        @reset="onReset">
-      <b-overlay :show="isOverlay">
-        <template #overlay>
-          <slot name="overlay"/>
-        </template>
-        <b-alert
-                :show="showAlert"
-                variant="danger"
-                fade
-                dismissible
-                @dismissed="showAlert=false">
-            <t>app.failed</t>
-          <!-- Show global error thrown by Meteor.Error -->
+        @reset="onReset"
+        class="bk-form">
+      <div v-if="isOverlay" class="q-mb-md">
+        <q-linear-progress indeterminate color="primary" />
+      </div>
+      <q-banner v-if="showAlert" class="bg-red-2 text-red q-mb-md" dense closable @close="showAlert = false">
+          <t>app.failed</t>
+        <!-- Show global error thrown by Meteor.Error -->
           <br><span v-if="!!globalError"><t>{{globalError}}</t></span>
           <div v-for="error in allErrorsOnHiddenFields" :key="error.name">
             <span><t>{{error.message}}</t> ({{error.value}})</span>
           </div>
-        </b-alert>
+      </q-banner>
 
-        <slot v-bind="{...$props,...$attrs}" :model="formModel">
-          <bk-field-list
-              v-bind="$attrs"
-              :model="formModel"
-              :for="$props['for']"
-              @change="onChangeInput"
-              @tag="$emit('tag',$event)"
-              :validate-server-side="validateServerSide"
-          >
+      <slot v-bind="{...$props,...$attrs}" :model="formModel">
+        <bk-field-list
+            v-bind="$attrs"
+            :model="formModel"
+            :for="$props['for']"
+            @change="onChangeInput"
+            @tag="$emit('tag',$event)"
+            :validate-server-side="validateServerSide"
+        >
 
-            <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-              <slot :name="slot" v-bind="props" />
-            </template>
+          <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
+            <slot :name="slot" v-bind="props" />
+          </template>
 
-          </bk-field-list>
-        </slot>
-        <slot name="after-form" v-bind="{...$props,...$attrs, model: formModel}"/>
-        <slot name="formButtons" v-bind="{...$props,...$attrs, model: formModel}">
-          <bk-submit v-if="!modal" v-bind="$attrs" :for="submitFor" :toast="toast" @cancel="onCancel">
-            <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-              <slot :name="slot" v-bind="props" />
-            </template>
-          </bk-submit>
-        </slot>
-      </b-overlay>
-    </b-form>
+        </bk-field-list>
+      </slot>
+      <slot name="after-form" v-bind="{...$props,...$attrs, model: formModel}"/>
+      <slot name="formButtons" v-bind="{...$props,...$attrs, model: formModel}">
+        <bk-submit v-if="!modal" v-bind="$attrs" :for="submitFor" :toast="toast" @cancel="onCancel">
+          <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
+            <slot :name="slot" v-bind="props" />
+          </template>
+        </bk-submit>
+      </slot>
+    </form>
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy";
-import {I18n} from "meteor/akyma:bk"
-import BkFieldList from "./BkFieldList.vue";
-import BkSubmit from "./BkSubmit.vue";
+import { Class, I18n } from '../../bridge/context'
+import BkFieldList from './BkFieldList.vue'
+import BkSubmit from './BkSubmit.vue'
 
 export default {
     name: "BkForm",

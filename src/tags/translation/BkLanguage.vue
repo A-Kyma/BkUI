@@ -1,50 +1,52 @@
 <template>
-  <b-nav-item-dropdown v-if="view==='dropdown'" right>
-    <template #button-content>
-      <b-icon icon="flag-fill"/>
-    </template>
-    <b-dropdown-item
+  <q-btn-dropdown v-if="view==='dropdown'" flat color="primary" icon="flag" dropdown-icon="expand_more">
+    <q-list>
+      <q-item
         v-for="lang in locales"
+        :key="lang"
+        clickable
         :active="isActive(lang)"
         @click="onClick(lang)"
-    >
-      <t>{{translate(lang)}}</t>
-    </b-dropdown-item>
-  </b-nav-item-dropdown>
+      >
+        <q-item-section>
+          <t>{{translate(lang)}}</t>
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </q-btn-dropdown>
 
-  <b-row v-else-if="view==='flags'">
-    <b-col v-for="lang in locales" class="p-0">
-      <b-link @click="onClick(lang,true)">
-          <span :class="'fi fi-'+lang"> </span>
-      </b-link>
-    </b-col>
-  </b-row>
+  <div v-else-if="view==='flags'" class="row q-gutter-xs">
+    <div v-for="lang in locales" :key="lang" class="col-auto">
+      <q-btn flat round dense @click="onClick(lang,true)">
+        <span :class="'fi fi-'+lang"> </span>
+      </q-btn>
+    </div>
+  </div>
 
-  <div v-else-if="view==='nav'" >
-    <b-navbar-nav>
-      <b-nav-item-dropdown ref="flagdropdown" class="flag-dropdown">
-        <template #button-content>
-          <span :class="'flags rounded-circle flags fi-1x1-'+active"> </span>
-        </template>
-        <b-dropdown-item v-for="lang in locales" v-if="lang !== active" @click="onClick(lang)" class="flag-item">
-          <span :class="'rounded-circle flags fi-1x1-'+lang"> </span>
-        </b-dropdown-item>
-      </b-nav-item-dropdown>
-    </b-navbar-nav>
+  <div v-else-if="view==='nav'">
+    <q-btn-dropdown ref="flagdropdown" class="flag-dropdown" flat>
+      <template #label>
+        <span :class="'flags rounded-circle flags fi-1x1-'+active"> </span>
+      </template>
+      <q-list>
+        <q-item v-for="lang in locales" :key="lang" v-if="lang !== active" clickable @click="onClick(lang)" class="flag-item">
+          <q-item-section>
+            <span :class="'rounded-circle flags fi-1x1-'+lang"> </span>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-btn-dropdown>
   </div>
 </template>
 
 <script>
-  import {Class} from "meteor/akyma:astronomy"
-  import {BNavItemDropdown, BRow, BCol, BDropdown, BDropdownItem, BLink, BNavbarNav} from 'bootstrap-vue-next'
-  import I18n from "../../../../lib/classes/i18n";
+  import { I18n, Meteor } from '../../bridge/context'
   import Languages from "../../../../lib/modules/customFields/types/language";
   import config from "../../../../lib/core/config";
 
 
   export default {
     name: "BkLanguage",
-    components: {BNavItemDropdown, BRow, BCol, BDropdown, BDropdownItem, BLink, BNavbarNav},
     props: {
       view: {
         type: String,
@@ -75,7 +77,7 @@
         this.$emit("change",lang)
         I18n.setLanguage(lang);
         this.active = lang;
-        if (close) this.$refs.flagdropdown.hide(true)
+        if (close) this.$refs.flagdropdown?.hide?.()
       }
     },
     meteor: {

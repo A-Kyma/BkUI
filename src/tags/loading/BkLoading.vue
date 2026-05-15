@@ -1,41 +1,43 @@
 <template>
-  <div v-if="type==='dots'">
-    <div class="text-center">
-      <b-icon icon="three-dots" animation="cylon" :font-scale="fontScale"></b-icon>
-    </div>
+  <div v-if="type === 'dots'" class="text-center">
+    <q-spinner-dots :size="size" :color="color" />
   </div>
-  <div v-else-if="type==='loading'">
+  <div v-else-if="type === 'loading'">
     <div class="text-center">LOADING</div>
     <div class="text-center">
-      <b-spinner variant="dark" type="grow" label="Spinning"></b-spinner>
-      <b-spinner variant="warning" type="grow" label="Spinning"></b-spinner>
-      <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
+      <q-spinner-dots color="dark" size="1.2em" class="q-mr-sm" />
+      <q-spinner-dots color="warning" size="1.2em" class="q-mr-sm" />
+      <q-spinner-dots color="negative" size="1.2em" />
     </div>
   </div>
-  <div v-else>
-    <div class="text-center">
-      <b-icon icon="circle-fill" animation="throb" :font-scale="fontScale"></b-icon>
-    </div>
+  <div v-else class="text-center">
+    <q-spinner color="primary" :size="size" />
   </div>
-
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
-
 export default {
-  name: "BkLoading",
+  name: 'BkLoading',
   props: {
     type: String,
     variant: String,
     fontScale: {
       type: String,
-      default: "4"
+      default: '4'
+    }
+  },
+  computed: {
+    size() {
+      const value = Number(this.fontScale)
+      if (!Number.isFinite(value) || value <= 0) return '2em'
+      return value + 'em'
+    },
+    color() {
+      return this.variant || 'primary'
     }
   }
 }
 </script>
 
 <style scoped>
-
 </style>

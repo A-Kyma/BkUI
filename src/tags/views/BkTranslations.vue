@@ -1,8 +1,8 @@
 <template>
   <div>
-    <b-button variant="primary" @click="generateYml">
+    <q-btn color="primary" @click="generateYml">
       Generate YAML
-    </b-button>
+    </q-btn>
 
     <bk-table
         model="I18n"
@@ -19,30 +19,27 @@
       </template>
 
       <template #cell()="{model,field}">
-        <b-overlay :show="model.overlay === field"
-                   rounded opacity="0.6"
-                   spinner-small
-                   spinner-variant="primary">
-          <b-input-group>
-            <b-form-input
-                :id="field + '.' + model._id"
-                :ref="'input-'+field+'.'+model._id"
-                :tabindex="locales.indexOf(field)+1"
-                type="text"
-                v-model="model[field]"
-                lazy
-                @focus="toggleState(model,field,null)"
-                @blur="saveTranslation(model,field,$event)"
-            />
-            <b-input-group-append v-if="field!=='fr'">
-              <b-input-group-text>
-                <b-link alt="translate" @click="onTranslate(model,field)">
-                  <b-icon-translate variant="primary"/>
-                </b-link>
-              </b-input-group-text>
-            </b-input-group-append>
-          </b-input-group>
-        </b-overlay>
+        <div class="relative-position translation-input-wrap">
+          <q-input
+            :id="field + '.' + model._id"
+            :ref="'input-'+field+'.'+model._id"
+            :tabindex="locales.indexOf(field)+1"
+            type="text"
+            :model-value="model[field]"
+            dense
+            outlined
+            @update:model-value="(val) => { model[field] = val }"
+            @focus="toggleState(model,field,null)"
+            @blur="saveTranslation(model,field,$event)"
+          >
+            <template v-if="field!=='fr'" #append>
+              <q-btn flat round dense icon="translate" color="primary" @click="onTranslate(model,field)" />
+            </template>
+          </q-input>
+          <q-inner-loading :showing="model.overlay === field">
+            <q-spinner color="primary" size="18px" />
+          </q-inner-loading>
+        </div>
       </template>
 
     </bk-table>
@@ -50,8 +47,7 @@
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
-import {I18n} from "meteor/akyma:bk"
+import { I18n, Meteor } from '../../bridge/context'
 import {dump} from "js-yaml"
 
 function download(filename, text) {
@@ -148,6 +144,10 @@ export default {
 }
 .input-group {
   width: auto;
+  min-width: 300px;
+}
+
+.translation-input-wrap {
   min-width: 300px;
 }
 </style>

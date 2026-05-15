@@ -1,21 +1,20 @@
 <template>
   <div>
     <div v-if="$props['for'] === 'view' && $props['type'] === 'grid-justify'">
-      <b-modal ref="image-modal" hide-footer hide-header centered size="lg">
-        <button @click="closeModal()" type="button" aria-label="Close" class="close">×</button>
-        <b-img
-            :src="activeImageSrc"
-            :text="activeImageText"
-        />
-      </b-modal>
+      <q-dialog v-model="imageDialog">
+        <q-card class="q-pa-sm" style="max-width: 90vw; max-height: 90vh;">
+          <q-btn flat round dense icon="close" class="absolute-top-right q-ma-sm" @click="closeModal()" />
+          <q-img :src="activeImageSrc" :alt="activeImageText" fit="contain" style="max-width: 85vw; max-height: 85vh;"/>
+        </q-card>
+      </q-dialog>
       <div class="container mb-2">
         <ul class="justified-image-grid" :style="cssProps">
           <template v-for="(file,index) in listFiles" :key="file._id">
             <li :style="'--width: '+file.meta.width+'; --height: ' + file.meta.height + ';'">
-              <b-img
+              <q-img
                   @click="openModal($event,file)"
                   :src="link(file,fileFormat)"
-                  :text="file.name"
+                  :alt="file.name"
               />
             </li>
           </template>
@@ -34,14 +33,14 @@
             :target="target"
             @click="openLink(link(listFiles[0]),$event)"
           >
-            <b-img thumbnail
+            <q-img
                    :src="link(listFiles[0],'thumbnail')"
                    :alt="listFiles[0].name"
                    class="crop-height"/>
           </a>
 
           <a v-else :href="staticLink()" alt="" :target="target" @click="openLink(staticLink(),$event)">
-            <b-img thumbnail
+            <q-img
                    :src="staticLink('thumbnail')"
                    alt=""
                    class="crop-height"/>
@@ -57,7 +56,7 @@
           </div>
 
         </div>
-        <b-container v-else class="p-2 bg-dark overflow-x">
+        <div v-else class="p-2 bg-dark overflow-x">
 
             <Container @drop="onDrop"
                        orientation="horizontal"
@@ -68,13 +67,13 @@
                 <div class="box draggable-item-horizontal">
 
                   <div v-if="$props['for'] !== 'view' && isFieldArray" class="box-top">
-                    <b-icon class="dragicon" icon="arrows-move"></b-icon>
+                    <q-icon class="dragicon" name="drag_indicator" />
                   </div>
 
                   <div v-if="$props['for'] !== 'view'" class="box-right"/>
 
                   <a :href="link(file)" :alt="file.name" :target="target" @click="openLink(link(file),$event)">
-                    <b-img thumbnail
+                    <q-img thumbnail
                            :src="link(file,'thumbnail')"
                            :alt="file.name"
                            class="crop-height"/>
@@ -93,38 +92,37 @@
               </Draggable>
             </Container>
 
-        </b-container>
+        </div>
       </div>
 
-      <b-avatar v-if="isAvatar && $props['for'] === 'view'"
-                v-bind="$attrs"
-                :src="staticLink(fileFormat)"
-      >
+      <q-avatar v-if="isAvatar && $props['for'] === 'view'" v-bind="$attrs">
+        <q-img :src="staticLink(fileFormat)" fit="cover" />
         <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
           <slot :name="slot" v-bind="props" />
         </template>
-      </b-avatar>
+      </q-avatar>
 
-      <b-overlay v-if="$props['for'] !== 'view'" :show="currentUpload">
+      <div v-if="$props['for'] !== 'view'" class="relative-position">
+        <q-inner-loading :showing="currentUpload">
+          <q-spinner color="primary" size="32px" />
+        </q-inner-loading>
 
         <!-- Avatar management .. -->
         <a href="#"
            v-if="isAvatar"
            @click="$refs.inputFile.$el.firstElementChild.click()">
-          <b-avatar v-if="isAvatar"
-                    v-bind="$attrs"
-                    :src="link(listFiles[0]) || staticLink(fileFormat)"
-          >
+          <q-avatar v-if="isAvatar" v-bind="$attrs">
+            <q-img :src="link(listFiles[0]) || staticLink(fileFormat)" fit="cover" />
             <template #badge>
               <slot name="badge" v-bind="{$props}">
-                <b-icon-pencil/>
+                <q-icon name="edit" />
               </slot>
             </template>
-          </b-avatar>
+          </q-avatar>
         </a>
         <!-- .. avatar management -->
 
-        <b-form-file
+        <q-file
             ref="inputFile"
             v-show="!isAvatar"
             v-bind="$attrs"
@@ -132,74 +130,63 @@
             :multiple="isFieldArray"
             :accept="accept"
             :placeholder="placeholderTranslated"
-            @input="onFilesAdded"
-            class="b-form-file">
+            @update:model-value="onFilesAdded"
+            class="b-form-file"
+        >
 
-          <template slot="drop-placeholder">
-            <t>{{dropPlaceholder}}</t>
+          <template #prepend>
+            <q-icon name="attach_file" />
           </template>
 
-          <template slot="file-name" slot-scope="{ names }">
-            <b-badge variant="dark">{{ names[0] }}</b-badge>
-            <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
-              + {{ names.length - 1 }} <t>app.file.more</t>
-            </b-badge>
+          <template #append>
+            <div class="text-caption text-grey-7"><t>{{ dropPlaceholder }}</t></div>
           </template>
 
-        </b-form-file>
+        </q-file>
 
-      </b-overlay>
+      </div>
 
-      <b-progress
+      <q-linear-progress
           v-if="currentUpload"
-          :value="progress"
-          show-progress
-          animated
-          striped
+          :value="progress / 100"
+          indeterminate="false"
+          query
           class="mt-2 mb-2"
       />
 
       <div v-if="showFilesList" @touchend="fixActionRestriction">
-        <b-list-group v-if="showFilesCounter">
-          <b-list-group-item>
+        <q-list v-if="showFilesCounter">
+          <q-item>
             <div>
-              <b-avatar-group size="4rem">
-                <b-avatar
+              <div class="row q-col-gutter-sm">
+                <q-avatar
                     v-for="(file,index) in listFiles" :key="file._id"
-                    :src="link(file,'car')"
-                    :text="file.ext"
                 />
-                <b-avatar
-                    variant="primary"
-                    :text="listFiles.length.toString()"
-                />
-              </b-avatar-group>
+                <q-avatar color="primary" text-color="white">{{ listFiles.length.toString() }}</q-avatar>
+              </div>
             </div>
             <div class="pt-2" v-if="listFiles.length > 0">
-              <b-button
+              <q-btn
                   :class="visible ? 'collapsed': null"
-                  :aria-expanded="visible ? 'true' : 'false'"
-                  aria-controls="collapse-1"
                   @click="visible = !visible"
+                  flat
               >
                 <t>app.file.manage</t>
-              </b-button>
+              </q-btn>
             </div>
-          </b-list-group-item>
-        </b-list-group>
-        <b-list-group id="collapse-1" :class="visible ? 'filesListShow': 'filesListHide'">
+          </q-item>
+        </q-list>
+        <q-list id="collapse-1" :class="visible ? 'filesListShow': 'filesListHide'">
           <Container @drop="onDrop"
                      drag-class="card-ghost bg-info"
                      drop-class="card-ghost-drop">
 
             <Draggable v-for="(file,index) in listFiles" :key="file._id" class="mt-2">
               <div class="draggable-item">
-              <b-list-group-item class="d-flex align-items-center">
-                <b-avatar
-                    :src="link(file,'thumbnail')"
-                    :text="file.ext"
-                    class="mr-3"
-                />
+              <q-item class="d-flex items-center">
+                <q-avatar class="mr-3">
+                  <q-img :src="link(file,'thumbnail')" fit="cover" />
+                </q-avatar>
 
                 <a :href="link(file)" :alt="file.name" :target="target" @click="openLink(link(file),$event)">
                   {{file.name}}
@@ -211,25 +198,22 @@
                     variant="danger"
                     class="ml-auto mr-2"
                 />
-                <b-icon icon="arrows-move" v-if="isFieldArray"></b-icon>
-              </b-list-group-item>
+                <q-icon v-if="isFieldArray" name="drag_indicator" />
+              </q-item>
               </div>
             </Draggable>
 
           </Container>
-        </b-list-group>
+        </q-list>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Class, ListField } from "meteor/akyma:astronomy"
-import { Match } from "meteor/check"
-import { Files } from "meteor/akyma:bk"
-import { Container, Draggable } from "vue-smooth-dnd";
-import applyDrag from "../../../utils/applyDrag";
-import I18n from "../../../../lib/classes/i18n";
+import { Class, ListField, Files, I18n, Tracker, Meteor } from '../../bridge/context'
+import { Container, Draggable } from 'vue-smooth-dnd'
+import applyDrag from '../../utils/applyDrag'
 
 export default {
   name: "BkFile",
@@ -278,6 +262,7 @@ export default {
       imagesLastRowBackground: this.lastRowBackground ? this.lastRowBackground : "rgb(3, 124, 168)",
       activeImageSrc: String,
       activeImageText: String,
+      imageDialog: false,
     }
   },
   created() {
@@ -286,7 +271,7 @@ export default {
   },
   mounted() {
     /***
-     * Bugfix z-index=-5 from b-form-input on some page : input not accessible.
+    * Bugfix z-index=-5 from file input on some page : input not accessible.
      * Drop won't work for IE11
      */
     let elemInputFile = this.$refs.inputFile?.$el?.getElementsByTagName("input")[0]
@@ -374,10 +359,10 @@ export default {
     openModal(e, file){
       this.activeImageSrc = this.link(file,this.slideFormat)
       this.activeImageText = file.name
-      this.$refs['image-modal'].show()
+      this.imageDialog = true
     },
     closeModal(e){
-      this.$refs['image-modal'].hide()
+      this.imageDialog = false
     },
     staticLink(format) {
       let fileId = this.model[this.field]
@@ -470,7 +455,7 @@ export default {
     onFilesAdded(files) {
       const self = this;
       if (files === null) return;
-      if (!Match.test(files,Array)) files = [files];
+      if (!Array.isArray(files)) files = [files];
       if (files.length === 0) return;
 
       if (self.isFieldArray) {

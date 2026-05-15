@@ -1,37 +1,28 @@
 <template>
-  <b-form ref="form" @submit="onSubmit">
-    <b-overlay :show="showOverlay">
-      <b-alert
-          :show="showAlert"
-          variant="danger"
-          fade
-          dismissible
-          @dismissed="showAlert=false">
-        <t>app.failed</t>
-        <br><span v-if="!!globalError"><t>{{globalError}}</t></span>
-      </b-alert>
-      <bk-field-list v-bind="{...$props,...$attrs}"
-                     :model="formModel.profile"
-                     :fields="requiredFields"
-                     for="new"
-                     variant="secondary"
-                     size="sm"
-                     label-cols-sm="4"
-      />
-      <bk-submit @cancel="onCancel" v-bind="$attrs"/>
-    </b-overlay>
-  </b-form>
+  <form ref="form" @submit="onSubmit" class="q-pa-md">
+    <div v-if="showOverlay" class="q-mb-md">
+      <q-linear-progress indeterminate color="primary" />
+    </div>
+    <q-banner v-if="showAlert" class="bg-red-2 text-red q-mb-md" dense closable @close="showAlert = false">
+      <t>app.failed</t>
+      <br><span v-if="!!globalError"><t>{{globalError}}</t></span>
+    </q-banner>
+    <bk-field-list v-bind="{...$props,...$attrs}"
+                   :model="formModel.profile"
+                   :fields="requiredFields"
+                   for="new"
+    />
+    <bk-submit @cancel="onCancel" v-bind="$attrs"/>
+  </form>
 </template>
 
 <script>
-import { Class } from "meteor/akyma:astronomy"
-import I18n from "../../../../lib/classes/i18n"
-import { User } from "meteor/akyma:bk"
-import BkSubmit from "./BkSubmit.vue";
+import { Class, I18n, User, Meteor } from '../../bridge/context'
+import BkSubmit from './BkSubmit.vue'
 
 export default {
-  name: "BkSubscribe",
-  components: {BkSubmit},
+  name: 'BkSubscribe',
+  components: { BkSubmit },
   props: {
     model: Class,
     modal: String,

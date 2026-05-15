@@ -1,43 +1,32 @@
 <template>
-  <b-overlay
-    :show="busy"
-    rounded
-    opacity="0.6"
-    spinner-small
-    :spinner-variant="variant"
-    class="d-inline-block"
+  <q-btn
+    v-if="isAvailable"
+    :loading="busy"
+    :disable="busy"
+    :color="variant"
+    :target="target"
+    :href="xlsLink"
+    icon="description"
+    @click.prevent="openLink($event,xlsLink,{method,...params})"
+    v-bind="$attrs"
   >
-    <b-button
-      v-if="isAvailable"
-      :disabled="busy"
-      :variant="variant"
-      :target="target"
-      :href="xlsLink"
-      @click.prevent="openLink($event,xlsLink,{method,...params})"
-      v-bind="$attrs"
-    >
-      <b-icon-file-earmark-excel aria-hidden="true"/>
-      <t>app.export</t>
-    </b-button>
+    <t>app.export</t>
+  </q-btn>
 
-    <bk-button-icon v-else-if="fromBkTable && !isCordova"
-                    label="app.export"
-                    for="export"
-                    v-bind="$attrs"
-                    @export="$emit('export',$event)"
-    />
-  </b-overlay>
+  <bk-button-icon v-else-if="fromBkTable && !isCordova"
+                  label="app.export"
+                  for="export"
+                  v-bind="$attrs"
+                  @export="$emit('export',$event)"
+  />
 </template>
 
 <script>
-import {Accounts} from "meteor/accounts-base"
-import {Meteor} from "meteor/meteor"
-import {EJSON} from "meteor/ejson"
-import {I18n, DateTime} from "meteor/akyma:bk"
+import { Accounts, Meteor, EJSON, I18n, DateTime } from '../../bridge/context'
 import XlsExportTreatment from "../../../../lib/utils/XlsExportTreatment";
 import {writeFile} from 'xlsx/xlsx.mjs'
-import errorPopupMixin from "../../../utils/errorPopupMixin";
-import BkButtonIcon from "./BkButtonIcon.vue";
+import errorPopupMixin from '../../utils/errorPopupMixin'
+import BkButtonIcon from './BkButtonIcon.vue'
 
 export default {
   name: "BkExportToXlsxButton",

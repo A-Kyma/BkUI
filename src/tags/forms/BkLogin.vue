@@ -1,7 +1,7 @@
 <template>
   <span v-if="!!loggedUser">
     {{loggedUser.defaultName()}}
-    [<b-link @click="onDisconnect"><t>app.user.login.disconnect</t></b-link>]
+    [<a href="#" @click="onDisconnect"><t>app.user.login.disconnect</t></a>]
   </span>
 
   <bk-form v-else-if="passwordForgotten"
@@ -30,29 +30,27 @@
         v-bind="$attrs"
         :model="user.profile"
         fields="email,password"/>
-    <b-link @click="onPasswordForgotten"><t>app.user.forgotPassword</t></b-link>
+    <a href="#" @click="onPasswordForgotten"><t>app.user.forgotPassword</t></a>
   </bk-form>
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
-import BkForm from "./BkForm.vue"
-import BkTranslate from "../translation/BkTranslate.vue"
-import { User } from "meteor/akyma:bk"
-import { Accounts } from "meteor/accounts-base"
+import BkForm from './BkForm.vue'
+import BkTranslate from '../translation/BkTranslate.vue'
+import { User, Accounts, Meteor } from '../../bridge/context'
 
 export default {
-  name: "BkLogin",
-  components: {BkForm, t: BkTranslate},
+  name: 'BkLogin',
+  components: { BkForm, t: BkTranslate },
   data() {
     return {
       user: new User(),
-      passwordForgotten: false,
+      passwordForgotten: false
     }
   },
   computed: {
     title() {
-      return "app.user.login.title";
+      return 'app.user.login.title'
     }
   },
   meteor: {
@@ -60,29 +58,29 @@ export default {
   },
   methods: {
     onDisconnect(e) {
-      e.preventDefault();
+      e.preventDefault()
       Meteor.logout()
     },
     onPasswordForgotten(e) {
-      e.preventDefault();
-      this.passwordForgotten=true;
+      e.preventDefault()
+      this.passwordForgotten = true
     },
-    onSubmitForgotten(e,vmForm) {
+    onSubmitForgotten(e, vmForm) {
       e.preventDefault()
       const profile = this.user.profile
-      if (!profile.isValid(["email"])) return
+      if (!profile.isValid(['email'])) return
 
-      vmForm.hideFail();
-      vmForm.showOverlay();
+      vmForm.hideFail()
+      vmForm.showOverlay()
 
-      Accounts.forgotPassword({email:profile.email},(err) => {
+      Accounts.forgotPassword({ email: profile.email }, (err) => {
         vmForm.hideOverlay()
         if (err) {
-          this.user.setError(err);
+          this.user.setError(err)
           vmForm.showFail()
         } else {
-          vmForm.showSuccess("app.user.mail.success")
-          this.passwordForgotten=false
+          vmForm.showSuccess('app.user.mail.success')
+          this.passwordForgotten = false
         }
       })
     },
@@ -90,29 +88,28 @@ export default {
       e.preventDefault()
       this.passwordForgotten=false
     },
-    onSubmit(e,vmForm) {
-      self=this;
+    onSubmit(e, vmForm) {
       // Avoid BkForm usage and classic html submission reloading the page
-      e.preventDefault();
+      e.preventDefault()
 
       const profile = this.user.profile
 
-      if (!profile.isValid(["email","password"])) return
-      vmForm.hideFail();
-      vmForm.showOverlay();
+      if (!profile.isValid(['email', 'password'])) return
+      vmForm.hideFail()
+      vmForm.showOverlay()
 
-      Meteor.loginWithPassword(profile.email,profile.password,(err) => {
+      Meteor.loginWithPassword(profile.email, profile.password, (err) => {
         vmForm.hideOverlay()
         if (err) {
-          this.user.setError(err);
+          this.user.setError(err)
           vmForm.showFail()
         } else {
-          vmForm.showSuccess("app.user.login.success")
-          this.$emit("loggedin")
+          vmForm.showSuccess('app.user.login.success')
+          this.$emit('loggedin')
         }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

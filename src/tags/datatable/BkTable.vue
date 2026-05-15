@@ -7,9 +7,7 @@
                       for="back"
                       v-bind="$attrs"
       />
-      <b-button  v-if="filterButton && filterFields" v-b-toggle.filter-collapse size="md" class="">
-        <b-icon icon="filter-circle-fill" aria-hidden="true"></b-icon>
-      </b-button>
+      <q-btn v-if="filterButton && filterFields" flat round dense icon="filter_alt" @click="filterOpen = !filterOpen" />
       <bk-button-icon v-if="actions.includes('add')"
                       label="app.add"
                       for="add"
@@ -47,96 +45,53 @@
     <slot name="customHeader" v-bind="{datatable, model, actions}"/>
     <slot name="filterHeader" v-bind="{datatable,model,actions}">
       <slot name="beforeFilter" v-bind="{datatable,model,actions}"/>
-      <b-collapse v-if="filterButton && filterFields" id="filter-collapse">
-      <b-form v-if="filterFields"
+      <q-slide-transition>
+        <div v-if="filterFields && (!filterButton || filterOpen)">
+          <form
               @submit="onSubmitFormFilter"
               @reset="onResetFormFilter"
               id="filter-header"
-              inline
-              class="mt-2 mb-1"
-      >
-        <b-input-group
-            v-for="field of filterFields"
-            class="mb-2 mr-sm-2 mb-sm-0 flex-nowrap max100vw"
-        >
-          <template #prepend v-if="!noFilterLabel">
-
-            <slot :name="'prependFilter-'+field" v-bind="{datatable,model,field,label:datatable.filterModel.constructor.getLabelKey(field)}">
-              <slot name="prependFilter" v-bind="{datatable,model,field,label: datatable.filterModel.constructor.getLabelKey(field)}">
-                <b-input-group-text>
-                  <t>{{datatable.filterModel.constructor.getLabelKey(field)}}</t>
-                </b-input-group-text>
-              </slot>
-            </slot>
-
-          </template>
-          <bk-inner-input
-              :model="datatable.filterModel"
-              :field="field"
-              for="filter"
-              form-field="filter"
-              :buttons="true"
-              button-variant="outline-primary"
-              @change="onAutoFilterSubmit($event,field)"
-              @input="onAutoFilterSubmit($event,field)"
-              @ready="$emit('filterReady',field)"
-              debounce="250"
+              class="row q-col-gutter-sm q-mt-sm q-mb-xs items-end"
           >
-            <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-              <slot :name="slot" v-bind="props" />
-            </template>
-          </bk-inner-input>
-        </b-input-group>
-        <b-button v-if="!noFilterReset" type="reset" variant="outline-dark" class="mr-2"><t>app.reset</t></b-button>
-        <b-button v-if="!autoFilterSubmit" type="submit" variant="outline-primary"><t>app.filter</t></b-button>
-        <slot name="afterFilterButtons" v-bind="{datatable,model}"/>
-      </b-form>
-      </b-collapse>
-      <div v-else>
-      <b-form v-if="filterFields"
-              @submit="onSubmitFormFilter"
-              @reset="onResetFormFilter"
-              id="filter-header"
-              inline
-              class="mt-2 mb-1"
-      >
-        <b-input-group
-            v-for="field of filterFields"
-            class="mb-2 mr-sm-2 mb-sm-0 flex-nowrap max100vw"
-        >
-          <template #prepend v-if="!noFilterLabel">
-
-            <slot :name="'prependFilter-'+field" v-bind="{datatable,model,field,label:datatable.filterModel.constructor.getLabelKey(field)}">
-              <slot name="prependFilter" v-bind="{datatable,model,field,label: datatable.filterModel.constructor.getLabelKey(field)}">
-                <b-input-group-text>
-                  <t>{{datatable.filterModel.constructor.getLabelKey(field)}}</t>
-                </b-input-group-text>
-              </slot>
-            </slot>
-
-          </template>
-          <bk-inner-input
-              :model="datatable.filterModel"
-              :field="field"
-              for="filter"
-              form-field="filter"
-              :buttons="true"
-              button-variant="outline-primary"
-              @change="onAutoFilterSubmit($event,field)"
-              @input="onAutoFilterSubmit($event,field)"
-              @ready="$emit('filterReady',field)"
-              debounce="250"
-          >
-            <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-              <slot :name="slot" v-bind="props" />
-            </template>
-          </bk-inner-input>
-        </b-input-group>
-        <b-button v-if="!noFilterReset" type="reset" variant="outline-dark" class="mr-2"><t>app.reset</t></b-button>
-        <b-button v-if="!autoFilterSubmit" type="submit" variant="outline-primary"><t>app.filter</t></b-button>
-        <slot name="afterFilterButtons" v-bind="{datatable,model}"/>
-      </b-form>
-      </div>
+            <div
+                v-for="field of filterFields"
+                :key="field"
+                class="col-12 col-md-auto max100vw"
+            >
+              <div v-if="!noFilterLabel" class="q-mb-xs">
+                <slot :name="'prependFilter-'+field" v-bind="{datatable,model,field,label:datatable.filterModel.constructor.getLabelKey(field)}">
+                  <slot name="prependFilter" v-bind="{datatable,model,field,label: datatable.filterModel.constructor.getLabelKey(field)}">
+                    <div class="text-caption text-weight-medium">
+                      <t>{{datatable.filterModel.constructor.getLabelKey(field)}}</t>
+                    </div>
+                  </slot>
+                </slot>
+              </div>
+              <bk-inner-input
+                  :model="datatable.filterModel"
+                  :field="field"
+                  for="filter"
+                  form-field="filter"
+                  :buttons="true"
+                  button-variant="outline-primary"
+                  @change="onAutoFilterSubmit($event,field)"
+                  @input="onAutoFilterSubmit($event,field)"
+                  @ready="$emit('filterReady',field)"
+                  debounce="250"
+              >
+                <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
+                  <slot :name="slot" v-bind="props" />
+                </template>
+              </bk-inner-input>
+            </div>
+            <div class="col-auto">
+              <q-btn v-if="!noFilterReset" type="reset" flat color="dark" class="q-mr-sm"><t>app.reset</t></q-btn>
+              <q-btn v-if="!autoFilterSubmit" type="submit" flat color="primary"><t>app.filter</t></q-btn>
+              <slot name="afterFilterButtons" v-bind="{datatable,model}"/>
+            </div>
+          </form>
+        </div>
+      </q-slide-transition>
     </slot>
     <div v-if="datatable.handler">
       <div v-if="datatable.firstReady">
@@ -160,12 +115,12 @@
     </div>
     <slot name="main" v-bind="{items,count,labeledFields,datatable, model, actions, filterModel: datatable.filterModel}">
       <div v-if="cardMode">
-        <b-card
+        <q-card
             v-for="(model,index) in items"
             class="mt-2 mb-2"
             @click="$emit('row-clicked',model)"
             :key="model._id">
-          <template #header>
+          <q-card-section>
             <span class="mr-2">
               <slot name="cardheader" v-bind="{model,index,fields: labeledFields}">
                 {{model.defaultName()}}
@@ -190,8 +145,8 @@
                 name="customActions"
                 v-bind="{model, index, cardMode}"
             />
-          </template>
-          <b-card-text role="row" :key="model._id">
+          </q-card-section>
+          <q-card-section role="row" :key="model._id">
             <slot name="row()" v-bind="{model,index,fields: labeledFields, cardMode}">
               <div v-for="cell in labeledFields" :key="cell.key" role="cell" class="align-middle">
                 <slot
@@ -235,9 +190,9 @@
                 </slot>
               </div>
             </slot>
-          </b-card-text>
+          </q-card-section>
           <slot name="afterRow" v-bind="{model, index}"/>
-        </b-card>
+        </q-card>
       </div>
       <table v-else role="table" :class="'table b-table table-hover mt-3 ' + tblClass">
         <slot name="tableHead" v-bind="{items,labeledFields,datatable, model, actions}">
@@ -268,7 +223,7 @@
                       lock-axis="y">
              <Draggable v-for="(model,index) in items" :key="model._id" :tag="{value: 'tr', props: {role: 'row'}}">
                  <slot name="row()" v-bind="{model,index,fields: labeledFields, cardMode}">
-                   <td role=cell :class="'align-middle ' + tdClass" style="cursor: pointer"><b-icon icon="arrows-move" aria-hidden="true"></b-icon></td>
+                   <td role=cell :class="'align-middle ' + tdClass" style="cursor: pointer"><q-icon name="drag_indicator" aria-hidden="true" /></td>
                    <td v-for="cell in labeledFields" :key="cell.key" role="cell" :class="'align-middle ' + tdClass">
                      <bk-button-icon
                          v-if="cell.key==='buttonActions'"

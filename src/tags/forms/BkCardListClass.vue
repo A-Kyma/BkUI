@@ -1,26 +1,35 @@
 <template>
-  <div ref="parent" class="col-12 d-block">
-    <b-row class="mb-2" v-if="$props['for'] !== 'view'">
-      <b-col v-if="getTypeField">
-        <b-form-select v-model="insertModel.selected">
-          <b-form-select-option v-for="option in enumOptions"
-                                :key="option.key"
-                                :value="option.value">
-            <t>{{option.key}}</t>
-          </b-form-select-option>
-        </b-form-select>
-      </b-col>
-      <b-col v-if="!$attrs.noNumber">
-        <b-form-input type="number" v-model="insertModel.number"/>
-      </b-col>
-      <b-col>
-        <b-button
-            variant="outline-secondary"
-            @click="onAddSubClass(0)">
+  <div ref="parent" class="full-width block">
+    <div class="row q-col-gutter-sm q-mb-sm" v-if="$props['for'] !== 'view'">
+      <div class="col" v-if="getTypeField">
+        <q-select
+          v-model="insertModel.selected"
+          :options="enumOptions"
+          option-label="key"
+          option-value="value"
+          emit-value
+          map-options
+          outlined
+          dense
+        >
+          <template #option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <t>{{scope.opt.key}}</t>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+      </div>
+      <div class="col" v-if="!$attrs.noNumber">
+        <q-input type="number" v-model.number="insertModel.number" outlined dense/>
+      </div>
+      <div class="col-auto">
+        <q-btn outline color="secondary" @click="onAddSubClass(0)">
           <t>app.add</t>
-        </b-button>
-      </b-col>
-    </b-row>
+        </q-btn>
+      </div>
+    </div>
 
     <Container
       ref="container"
@@ -36,11 +45,8 @@
         :key="innerModel._id.valueOf()"
         class="overflow-visible"
       >
-        <b-card
-            class="border mb-2 drag-hover"
-            body-class="pt-2 pl-2 pr-4 pb-0"
-        >
-          <b-card-header v-if="getTypeField">
+        <q-card class="q-mb-sm drag-hover" bordered>
+          <q-card-section class="q-pt-sm q-pl-sm q-pr-lg q-pb-none" v-if="getTypeField">
 
 
             <bk-view-clean
@@ -68,7 +74,10 @@
                 :form-generic-field="formField"
             />
 
-          </b-card-header>
+          </q-card-section>
+          <q-card-section class="q-pt-sm q-pl-sm q-pr-lg q-pb-none" v-else>
+            <slot name="card-body-prefix"/>
+          </q-card-section>
           <bk-field-list
               v-if="innerModel.getDefinition('isActive')===undefined || innerModel.isActive"
               v-bind="$attrs"
@@ -91,70 +100,57 @@
               class="remove-button"
           />
 
-          <!--
-          <b-card-footer v-if="$props['for'] !== 'view'">
-            <b-button
-                variant="outline-secondary"
-                @click="onAdd(index+1,innerModel)"
-            >
-              <t>app.add</t>
-            </b-button>
-          </b-card-footer>
-          -->
-        </b-card>
+          <!-- legacy add-footer kept out during Quasar migration -->
+        </q-card>
       </Draggable>
     </Container>
-    <!--
-    <b-button
-        v-if="model[field].length === 0 && $props['for'] !== 'view'"
-        variant="outline-secondary"
-        @click="onAdd(0)">
-      <t>app.add</t>
-    </b-button>
-
-    <bk-modal :id="modalId" v-if="getTypeField" @ok="onSubmitModal">
-      <bk-input :model="modalModel" :field="getTypeField"/>
-    </bk-modal>
-    -->
-    <b-row class="mt-2" v-if="model[field].length>0 && $props['for'] !== 'view'">
-      <b-col v-if="getTypeField">
-        <b-form-select v-model="insertModel.selected">
-          <b-form-select-option v-for="option in enumOptions"
-                                :key="option.key"
-                                :value="option.value">
-            <t>{{option.key}}</t>
-          </b-form-select-option>
-        </b-form-select>
-      </b-col>
-      <b-col v-if="!$attrs.noNumber">
-        <b-form-input type="number" v-model="insertModel.number"/>
-      </b-col>
-      <b-col>
-        <b-button
-            variant="outline-secondary"
-            @click="onAddSubClass(-1)">
+    <!-- legacy add-modal kept out during Quasar migration -->
+    <div class="row q-col-gutter-sm q-mt-sm" v-if="model[field].length>0 && $props['for'] !== 'view'">
+      <div class="col" v-if="getTypeField">
+        <q-select
+          v-model="insertModel.selected"
+          :options="enumOptions"
+          option-label="key"
+          option-value="value"
+          emit-value
+          map-options
+          outlined
+          dense
+        >
+          <template #option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <t>{{scope.opt.key}}</t>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+      </div>
+      <div class="col" v-if="!$attrs.noNumber">
+        <q-input type="number" v-model.number="insertModel.number" outlined dense/>
+      </div>
+      <div class="col-auto">
+        <q-btn outline color="secondary" @click="onAddSubClass(-1)">
           <t>app.add</t>
-        </b-button>
-      </b-col>
-    </b-row>
+        </q-btn>
+      </div>
+    </div>
 
   </div>
 </template>
 
 <script>
-import { Class } from "meteor/akyma:astronomy"
-import { Enum } from "meteor/akyma:bk"
+import { Class, Enum } from '../../bridge/context'
 import BkButtonIcon from "../links/BkButtonIcon.vue";
 import BkFieldList from "./BkFieldList.vue";
-import BkModal from "../modals/BkModal.vue";
 import BkInput from "../inputs/BkInput.vue";
 import BkViewClean from "../views/BkViewClean.vue";
 import { Container, Draggable } from "vue-smooth-dnd";
-import applyDrag from "../../../utils/applyDrag";
+import applyDrag from "../../utils/applyDrag";
 
 export default {
     name: "BkCardListClass",
-    components: {BkButtonIcon,BkFieldList,BkModal,BkInput,BkViewClean,Container,Draggable},
+  components: {BkButtonIcon,BkFieldList,BkInput,BkViewClean,Container,Draggable},
     props: {
       model: Class,
       field: String,

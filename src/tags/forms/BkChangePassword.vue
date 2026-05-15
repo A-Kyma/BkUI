@@ -10,52 +10,49 @@
 </template>
 
 <script>
-import { Class } from "meteor/akyma:astronomy"
-import { User } from "meteor/akyma:bk"
-import BkForm from "./BkForm.vue"
-import { Accounts } from "meteor/accounts-base"
+import { User, Accounts } from '../../bridge/context'
+import BkForm from './BkForm.vue'
 
 export default {
-  name: "BkChangePassword",
-  components: {BkForm},
+  name: 'BkChangePassword',
+  components: { BkForm },
   props: {
     for: {
       type: String,
-      default: "edit"
-    },
+      default: 'edit'
+    }
   },
   data() {
     return {
-      user: new User(),
+      user: new User()
     }
   },
   computed: {
     title() {
-      return "app.user.changePassword";
+      return 'app.user.changePassword'
     }
   },
   methods: {
-    onSubmit(e,vmForm) {
-      self=this;
+    onSubmit(e, vmForm) {
       // Avoid BkForm usage and classic html submission reloading the page
-      e.preventDefault();
+      e.preventDefault()
 
-      if (!this.user.profile.isValid(["oldPassword","password","passwordConfirmation"])) return
-      vmForm.hideFail();
-      vmForm.showOverlay();
+      if (!this.user.profile.isValid(['oldPassword', 'password', 'passwordConfirmation'])) return
+      vmForm.hideFail()
+      vmForm.showOverlay()
 
-      Accounts.changePassword(this.user.profile.oldPassword,this.user.profile.password,(err,result) => {
+      Accounts.changePassword(this.user.profile.oldPassword, this.user.profile.password, (err) => {
         vmForm.hideOverlay()
         if (err) {
-          this.user.setError(err);
+          this.user.setError(err)
           vmForm.showFail()
         } else {
           vmForm.showSuccess()
-          this.$router.go(-1);
+          this.$router.go(-1)
         }
       })
     }
-  },
+  }
 }
 </script>
 

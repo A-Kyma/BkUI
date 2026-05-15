@@ -1,4 +1,4 @@
-import { autorun } from 'vue-meteor-tracker'
+import { autorun, subscribe } from 'vue-meteor-tracker'
 
 let Bk
 let Class
@@ -10,6 +10,15 @@ let Datatable
 let Lifecycle
 let ListField
 let Enum
+let DateTime
+let Files
+let Filter
+let User
+let ValidationError
+let Accounts
+let EJSON
+let Tracker
+let toast
 
 const setBkUIContext = (deps = {}) => {
   if (deps.Bk) Bk = deps.Bk
@@ -40,6 +49,27 @@ const setBkUIContext = (deps = {}) => {
 
   if (deps.ListField) ListField = deps.ListField
   if (!ListField && Bk?.ListField) ListField = Bk.ListField
+
+  if (deps.DateTime) DateTime = deps.DateTime
+  if (!DateTime && Bk?.DateTime) DateTime = Bk.DateTime
+
+  if (deps.Files) Files = deps.Files
+  if (!Files && Bk?.Files) Files = Bk.Files
+
+  if (deps.Filter) Filter = deps.Filter
+  if (!Filter && Bk?.Filter) Filter = Bk.Filter
+
+  if (deps.User) User = deps.User
+  if (!User && Bk?.User) User = Bk.User
+
+  if (deps.ValidationError) ValidationError = deps.ValidationError
+  if (!ValidationError && Bk?.ValidationError) ValidationError = Bk.ValidationError
+
+  if (deps.Accounts) Accounts = deps.Accounts
+  if (deps.EJSON) EJSON = deps.EJSON
+  if (deps.Tracker) Tracker = deps.Tracker
+
+  if (deps.toast) toast = deps.toast
 }
 
 export {
@@ -48,11 +78,21 @@ export {
   I18n,
   Role,
   autorun,
+  subscribe,
   Meteor,
   Datatable,
   Lifecycle,
   Enum,
   ListField,
+  DateTime,
+  Files,
+  Filter,
+  User,
+  ValidationError,
+  Accounts,
+  EJSON,
+  Tracker,
+  toast,
   isClient,
   setBkUIContext
 }

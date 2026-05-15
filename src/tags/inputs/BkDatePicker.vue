@@ -1,41 +1,38 @@
 <template>
-  <div class="col-12 pl-0 pr-0">
-    <div v-if="readonly" class="form-control-plaintext">
+  <div>
+    <div v-if="readonly" class="bk-plaintext">
       {{readonlyValue}}
     </div>
-    <b-row v-else>
-      <b-col lg="8" md="12" class="nopaddingleft">
-        <b-form-datepicker
+    <div v-else class="row q-col-gutter-sm">
+      <div class="col-xs-12 col-md-8">
+        <q-date
           ref="datepicker"
-          v-model="dateValue"
+          :model-value="dateValue"
+          @update:model-value="val => dateValue = val"
           :locale="locale"
-          :placeholder="placeholder"
-          :state="state"
-          :disabled="plaintext"
-          start-weekday="1"
-          @hidden="selectTime"
+          :disable="plaintext"
+          first-day-of-week="1"
+          class="full-width"
         />
-      </b-col>
-      <b-col class="nopaddingleft">
-        <b-form-timepicker
+      </div>
+      <div class="col-xs-12 col-md-4">
+        <q-input
           ref="timepicker"
-          v-model="timeValue"
-          :locale="locale"
-          placeholder="HH:mm"
-          minutes-step="5"
-          :state="state"
-          :disabled="plaintext || dateValue===undefined"
-          :label-close-button="labelClose"
+          :model-value="timeValue"
+          @update:model-value="val => timeValue = val"
+          type="time"
+          :placeholder="labelClose"
+          :disable="plaintext || dateValue===undefined"
+          outlined
+          dense
         />
-      </b-col>
-    </b-row>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
-import {DateTime,I18n} from "meteor/akyma:bk"
-
+import { Class, DateTime, I18n } from '../../bridge/context'
 
 export default {
   name: "BkDatePicker",
@@ -114,5 +111,8 @@ export default {
 </script>
 
 <style scoped>
+.bk-plaintext {
+  min-height: 1.5rem;
+}
 
 </style>

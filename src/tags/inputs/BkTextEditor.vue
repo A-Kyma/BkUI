@@ -2,37 +2,21 @@
   <div v-if="editor" class="container">
     <div class="control-group">
       <Teleport to="body" :disabled="!isMobile">
-        <b-button-group size="sm" :class="editorToolbarClass">
-          <b-button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-            <b-icon-type-bold/>
-          </b-button>
-          <b-button @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-            <b-icon-type-italic/>
-          </b-button>
-          <b-button @click="editor.chain().focus().toggleStrike().run()" :disabled="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
-            <b-icon-type-strikethrough/>
-          </b-button>
-          <b-button @click="editor.chain().focus().toggleCode().run()" :disabled="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
-            <b-icon-code/>
-          </b-button>
-          <b-button @click="editor.chain().focus().unsetAllMarks().run()">
-            <b-icon-x-lg/>
-          </b-button>
+        <q-btn-group unelevated :class="editorToolbarClass">
+          <q-btn flat dense icon="format_bold" @click="editor.chain().focus().toggleBold().run()" :disable="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }" />
+          <q-btn flat dense icon="format_italic" @click="editor.chain().focus().toggleItalic().run()" :disable="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }" />
+          <q-btn flat dense icon="strikethrough_s" @click="editor.chain().focus().toggleStrike().run()" :disable="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }" />
+          <q-btn flat dense icon="code" @click="editor.chain().focus().toggleCode().run()" :disable="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }" />
+          <q-btn flat dense icon="format_clear" @click="editor.chain().focus().unsetAllMarks().run()" />
           <!--        <button @click="editor.chain().focus().clearNodes().run()">-->
           <!--          Clear nodes-->
           <!--        </button>-->
           <!--        <button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">-->
           <!--          Paragraph-->
           <!--        </button>-->
-          <b-button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
-            <b-icon-type-h1/>
-          </b-button>
-          <b-button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
-            <b-icon-type-h2/>
-          </b-button>
-          <b-button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
-            <b-icon-type-h3/>
-          </b-button>
+          <q-btn flat dense label="H1" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }" />
+          <q-btn flat dense label="H2" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }" />
+          <q-btn flat dense label="H3" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }" />
           <!--        <button @click="editor.chain().focus().toggleHeading({ level: 4 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">-->
           <!--          H4-->
           <!--        </button>-->
@@ -42,34 +26,22 @@
           <!--        <button @click="editor.chain().focus().toggleHeading({ level: 6 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }">-->
           <!--          H6-->
           <!--        </button>-->
-          <b-button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
-            <b-icon-list-ul/>
-          </b-button>
-          <b-button @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
-            <b-icon-list-ol/>
-          </b-button>
-          <b-button @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
-            <b-icon-code-slash/>
-          </b-button>
-          <b-button @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }">
-            <b-icon-chat-square-quote/>
-          </b-button>
+          <q-btn flat dense icon="format_list_bulleted" @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }" />
+          <q-btn flat dense icon="format_list_numbered" @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }" />
+          <q-btn flat dense icon="code" @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }" />
+          <q-btn flat dense icon="format_quote" @click="editor.chain().focus().toggleBlockquote().run()" :class="{ 'is-active': editor.isActive('blockquote') }" />
           <!--        <button @click="editor.chain().focus().setHorizontalRule().run()">-->
           <!--          Horizontal rule-->
           <!--        </button>-->
           <!--        <button @click="editor.chain().focus().setHardBreak().run()">-->
           <!--          Hard break-->
           <!--        </button>-->
-          <b-button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
-            <b-icon-arrow90deg-left/>
-          </b-button>
-          <b-button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
-            <b-icon-arrow90deg-right/>
-          </b-button>
+          <q-btn flat dense icon="undo" @click="editor.chain().focus().undo().run()" :disable="!editor.can().chain().focus().undo().run()" />
+          <q-btn flat dense icon="redo" @click="editor.chain().focus().redo().run()" :disable="!editor.can().chain().focus().redo().run()" />
           <!--        <button @click="editor.chain().focus().setColor('#958DF1').run()" :class="{ 'is-active': editor.isActive('textStyle', { color: '#958DF1' }) }">-->
           <!--          Purple-->
           <!--        </button>-->
-        </b-button-group>
+        </q-btn-group>
       </Teleport>
     </div>
     <component :is="'EditorContent'" :editor="editor" class="tiptap"/>
@@ -77,6 +49,7 @@
 </template>
 
 <script>
+import { Meteor } from '../../bridge/context'
 import { Editor } from "@tiptap/core"
 import { EditorContent } from "@tiptap/vue-3"
 import StarterKit from "@tiptap/starter-kit"

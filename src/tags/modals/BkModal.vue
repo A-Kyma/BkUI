@@ -1,41 +1,41 @@
 <template>
-  <b-modal
-      ref="modal"
-      :id="id"
-      @ok="onOk"
-      @show="onShow"
-      v-bind="$attrs"
-      @shown="$emit('shown')"
-      @hide="$emit('hide')"
+  <q-dialog
+    ref="modal"
+    v-model="openData"
+    @show="onShow"
+    @hide="$emit('hide')"
+    @after-show="$emit('shown')"
   >
-    <template #modal-title>
-      <slot name="title">
-        <t>{{title}}</t>
-      </slot>
-    </template>
+    <q-card class="bk-modal-card">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">
+          <slot name="title">
+            <t>{{title}}</t>
+          </slot>
+        </div>
+      </q-card-section>
 
-    <template #modal-ok>
-      <slot name="ok">
-      <t>app.ok</t>
-      </slot>
-    </template>
-    <template #modal-cancel>
-        <t>app.cancel</t>
-    </template>
+      <q-card-section>
+        <bk-loading v-if="!!subscription && !$subReady[subscription]  && !firstSubReady" type="dots"/>
+        <slot v-else name="default" v-bind="{model: findModel}"></slot>
+      </q-card-section>
 
-    <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-      <slot :name="slot" v-bind="props"/>
-    </template>
-
-    <template #default="props">
-      <bk-loading v-if="!!subscription && !$subReady[subscription]  && !firstSubReady" type="dots"/>
-      <slot v-else name="default" v-bind="{model: findModel}"></slot>
-    </template>
-  </b-modal>
+      <q-card-actions align="right">
+        <q-btn flat color="secondary" @click="hide()">
+          <t>app.cancel</t>
+        </q-btn>
+        <q-btn color="primary" @click="onOkClick">
+          <slot name="ok">
+            <t>app.ok</t>
+          </slot>
+        </q-btn>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
+import { Class } from '../../bridge/context'
 
 export default {
   name: "BkModal",
@@ -51,7 +51,8 @@ export default {
   },
   data() {
     return {
-      firstSubReady: false
+      firstSubReady: false,
+      openData: false
     }
   },
   computed: {
@@ -67,6 +68,16 @@ export default {
     },
   },
   methods: {
+    onOkClick() {
+      const event = {
+        defaultPrevented: false,
+        preventDefault() {
+          this.defaultPrevented = true
+        }
+      }
+      this.onOk(event)
+      if (!event.defaultPrevented) this.hide()
+    },
     onOk(e) {
       this.$emit("ok",e);
     },
@@ -76,29 +87,20 @@ export default {
         this.$subscribe(this.subscription,[this.model._id])
     },
     show() {
-      // bootstrap-vue-3 uses component instance methods; fallback to $bvModal for Vue2
-      if (this.$refs.modal && typeof this.$refs.modal.show === 'function') {
-        this.$refs.modal.show()
-        return
-      }
-      if (this.$bvModal && typeof this.$bvModal.show === 'function') {
-        this.$bvModal.show(this.id)
-      }
+      this.openData = true
     },
     hide() {
-      if (this.$refs.modal && typeof this.$refs.modal.hide === 'function') {
-        this.$refs.modal.hide()
-        return
-      }
-      if (this.$bvModal && typeof this.$bvModal.hide === 'function') {
-        this.$bvModal.hide(this.id)
-      }
+      this.openData = false
     }
   },
 }
 </script>
 
 <style scoped>
+.bk-modal-card {
+  min-width: min(92vw, 720px);
+}
+
   .BkButton:hover{
     transform:scale(1.3);
   }

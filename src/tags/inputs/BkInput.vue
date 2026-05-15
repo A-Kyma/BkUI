@@ -5,49 +5,43 @@
 <template>
   <transition name="slide-fade" appear>
     <slot :name="formGenericFieldComputed + '-form-group'" v-bind="$props">
-      <b-card v-if="ui.collapsible || ui.accordion"
-              no-body
-              :class="'mb-1 ' + this.model.constructor.getName()"
-              :id="field">
-        <b-card-header header-tag="header" class="p-1" role="tab">
-          <b-button block @click="toggleAccordion" v-bind="$attrs">
+      <q-expansion-item
+        v-if="ui.collapsible || ui.accordion"
+        v-model="accordionOpen"
+        :group="ui.accordion ? accordionGroupId : void 0"
+        expand-separator
+        :class="'q-mb-sm ' + this.model.constructor.getName()"
+        :id="field"
+      >
+        <template #header>
+          <q-item-section>
             <slot :name="formFieldComputed + '-label'" v-bind="$props">
               <bk-label v-bind="$props" noRequired/>
             </slot>
-          </b-button>
-        </b-card-header>
-        <b-collapse
-            :id="accordionId"
-            visible
-            :accordion="accordionGroupId"
-            role="tabpanel">
-          <b-card-body>
+          </q-item-section>
+        </template>
 
-            <bk-inner-input
-                v-bind="{...$parent.$attrs,...$props, ...$attrs}"
-                @state="onState"
-                @validationError="onError"
-                :model="inputModel"
-                @input="$emit('input')"
-                @change="$emit('change')"
-                @select="$emit('select',$event)"
-                @tag="$emit('tag',$event)"
-            >
+        <q-card-section>
+          <bk-inner-input
+              v-bind="{...$parent.$attrs,...$props, ...$attrs}"
+              @state="onState"
+              @validationError="onError"
+              :model="inputModel"
+              @input="$emit('input')"
+              @change="$emit('change')"
+              @select="$emit('select',$event)"
+              @tag="$emit('tag',$event)"
+          >
+            <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
+              <slot :name="slot" v-bind="props" />
+            </template>
+          </bk-inner-input>
 
-              <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-                <slot :name="slot" v-bind="props" />
-              </template>
-
-            </bk-inner-input>
-
-            <b-form-invalid-feedback :state="state">
-              <span v-html="invalidFeedback"/>
-            </b-form-invalid-feedback>
-          </b-card-body>
-        </b-collapse>
-      </b-card>
-      <div v-else-if="ui.basic">
-        <div class="col-lg-12 basic-group" :class="accordionGroupId" :id="field">
+          <div v-if="state === false" class="text-negative text-caption q-mt-xs" v-html="invalidFeedback"/>
+        </q-card-section>
+      </q-expansion-item>
+      <div v-else-if="ui.basic" class="q-mb-sm">
+        <div class="col-12 basic-group" :class="accordionGroupId" :id="field">
           <slot :name="formFieldComputed + '-label'" v-bind="$props">
             <bk-label v-bind="$props" noRequired/>
           </slot>
@@ -68,51 +62,42 @@
 
         </bk-inner-input>
 
-        <b-form-invalid-feedback :state="state">
-          <span v-html="invalidFeedback"/>
-        </b-form-invalid-feedback>
+        <div v-if="state === false" class="text-negative text-caption q-mt-xs" v-html="invalidFeedback"/>
       </div>
-      <b-form-group v-bind="{...$parent.$attrs,...$attrs}"
-                    :valid-feedback="validFeedback"
-                    v-else-if="canView"
-                    :label-class="ui.labelClass"
-                    :label-size="ui.labelSize"
-                    :description="description"
-      >
+      <div v-else-if="canView" class="q-mb-md">
         <template #label>
           <slot :name="formGenericFieldComputed + '-label'" v-bind="$props">
             <bk-label v-bind="{...$props,...$attrs}"/>
           </slot>
         </template>
 
-          <bk-inner-input
-              v-bind="{...$parent.$attrs,...$props, ...$attrs}"
-              @state="onState"
-              @validationError="onError"
-              @input="$emit('input')"
-              @select="$emit('select',$event)"
-              @tag="$emit('tag',$event)"
-              :model="inputModel">
+        <div v-if="description" class="text-caption text-grey-7 q-mb-xs">{{ description }}</div>
 
-            <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-              <slot :name="slot" v-bind="props" />
-            </template>
+        <bk-inner-input
+            v-bind="{...$parent.$attrs,...$props, ...$attrs}"
+            @state="onState"
+            @validationError="onError"
+            @input="$emit('input')"
+            @select="$emit('select',$event)"
+            @tag="$emit('tag',$event)"
+            :model="inputModel">
 
-          </bk-inner-input>
+          <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
+            <slot :name="slot" v-bind="props" />
+          </template>
 
-          <b-form-invalid-feedback :state="state">
-              <span v-html="invalidFeedback"/>
-          </b-form-invalid-feedback>
-      </b-form-group>
+        </bk-inner-input>
+
+        <div v-if="state === false" class="text-negative text-caption q-mt-xs" v-html="invalidFeedback"/>
+      </div>
     </slot>
   </transition>
 </template>
 
 <script>
-  import {Class} from 'meteor/akyma:astronomy';
-  import _ from "lodash";
-  import BkLabel from "../forms/BkLabel.vue";
-  import { I18n } from "meteor/akyma:bk"
+  import { Class, I18n } from '../../bridge/context'
+  import _ from 'lodash'
+  import BkLabel from '../forms/BkLabel.vue'
 
   export default {
     name: "BkInput",
@@ -137,6 +122,7 @@
       return {
         invalidFeedback: null,
         state: null,
+        accordionOpen: true,
       }
     },
 
@@ -210,7 +196,7 @@
         this.invalidFeedback = error;
       },
       toggleAccordion() {
-        this.$root.$emit('bv::toggle::collapse', this.accordionId)
+        this.accordionOpen = !this.accordionOpen
       },
     }
   }

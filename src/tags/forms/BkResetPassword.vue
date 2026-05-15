@@ -10,53 +10,50 @@
 </template>
 
 <script>
-import { Class } from "meteor/akyma:astronomy"
-import { User } from "meteor/akyma:bk"
-import BkForm from "./BkForm.vue"
-import { Accounts } from "meteor/accounts-base"
+import { User, Accounts } from '../../bridge/context'
+import BkForm from './BkForm.vue'
 
 export default {
-  name: "BkResetPassword",
-  components: {BkForm},
+  name: 'BkResetPassword',
+  components: { BkForm },
   props: {
     for: {
       type: String,
-      default: "edit"
-    },
+      default: 'edit'
+    }
   },
   data() {
     return {
-      user: new User(),
+      user: new User()
     }
   },
   computed: {
     title() {
-      if (this.$props["for"] === "new") return "app.user.createPassword"
-      return "app.user.resetPassword";
+      if (this.$props.for === 'new') return 'app.user.createPassword'
+      return 'app.user.resetPassword'
     }
   },
   methods: {
-    onSubmit(e,vmForm) {
-      self=this;
+    onSubmit(e, vmForm) {
       // Avoid BkForm usage and classic html submission reloading the page
-      e.preventDefault();
+      e.preventDefault()
 
-      if (!this.user.profile.isValid(["password","passwordConfirmation"])) return
-      vmForm.hideFail();
-      vmForm.showOverlay();
+      if (!this.user.profile.isValid(['password', 'passwordConfirmation'])) return
+      vmForm.hideFail()
+      vmForm.showOverlay()
 
-      Accounts.resetPassword(this.$route.params.token,this.user.profile.password,(err,result) => {
+      Accounts.resetPassword(this.$route.params.token, this.user.profile.password, (err) => {
         vmForm.hideOverlay()
         if (err) {
-          this.user.setError(err);
+          this.user.setError(err)
           vmForm.showFail()
         } else {
           vmForm.showSuccess()
-          this.$router.push("/");
+          this.$router.push('/')
         }
       })
     }
-  },
+  }
 }
 </script>
 

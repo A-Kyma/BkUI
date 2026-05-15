@@ -1,43 +1,66 @@
 <template>
-  <div class="row p-3 bg-secondary filters">
-    <div class="col-md-10 offset-md-1 filter-form">
-      <form class="justify-content-md-center mt-1 form-inline">
-        <div class="search-header">
-          <input id="inline-form-input-city" type="text" placeholder="Select a Town" class="mb-1 mr-1 form-control">
-          <select id="inline-form-custom-select-status" class="mb-1 mr-1 custom-select">
-            <option value="all">Status</option>
-            <option value="Draft">Draft</option>
-            <option value="Published">Published</option>
-          </select>
-          <select id="inline-form-custom-select-buy" class="mb-1 mr-1 custom-select">
-            <option value="all">Buy or Rent</option>
-            <option value="Buy">Buy</option>
-            <option value="Rent">Rent</option>
-          </select>
-          <select id="inline-form-custom-select-type" class="mb-1 mr-1 custom-select">
-            <option value="All">Type</option>
-            <option value="House">House</option>
-            <option value="Apartment">Apartment</option>
-            <option value="Bungalow">Bungalow</option>
-          </select>
-          <input id="inline-form-input-minprice" type="text" placeholder="Price" class="mb-1 mr-1 resized form-control">
-          <input id="inline-form-input-ref" type="text" placeholder="ImmoBe Ref" class="mb-1 mr-1 resized form-control">
+  <div class="q-pa-md bg-secondary filters">
+    <div class="filter-form">
+      <q-form class="search-header row q-col-gutter-sm items-end" @submit.prevent>
+        <div class="col-12 col-md-4">
+          <q-input outlined dense model-value="" placeholder="Select a Town" />
         </div>
-<!--        <b-button v-b-toggle.sidebar-variant class="mb-1 mr-1">More criteria +</b-button>-->
-        <b-button class="btn-search mb-1" href="/search">Search</b-button>
-      </form>
+        <div class="col-12 col-md-2">
+          <q-select outlined dense emit-value map-options model-value="all" :options="statusOptions" />
+        </div>
+        <div class="col-12 col-md-2">
+          <q-select outlined dense emit-value map-options model-value="all" :options="buyOptions" />
+        </div>
+        <div class="col-12 col-md-2">
+          <q-select outlined dense emit-value map-options model-value="all" :options="typeOptions" />
+        </div>
+        <div class="col-12 col-md-1">
+          <q-input outlined dense model-value="" placeholder="Price" />
+        </div>
+        <div class="col-12 col-md-1">
+          <q-input outlined dense model-value="" placeholder="ImmoBe Ref" />
+        </div>
+        <div class="col-12">
+          <q-btn color="primary" label="Search" type="submit" />
+        </div>
+      </q-form>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "BkFilters"
+  name: 'BkFilters',
+  data() {
+    return {
+      statusOptions: [
+        { label: 'Status', value: 'all' },
+        { label: 'Draft', value: 'Draft' },
+        { label: 'Published', value: 'Published' }
+      ],
+      buyOptions: [
+        { label: 'Buy or Rent', value: 'all' },
+        { label: 'Buy', value: 'Buy' },
+        { label: 'Rent', value: 'Rent' }
+      ],
+      typeOptions: [
+        { label: 'Type', value: 'all' },
+        { label: 'House', value: 'House' },
+        { label: 'Apartment', value: 'Apartment' },
+        { label: 'Bungalow', value: 'Bungalow' }
+      ]
+    }
+  }
 }
 </script>
 
 <style scoped>
-  .filters{
-    margin-bottom: 10px;
-  }
+.filters {
+  margin-bottom: 10px;
+}
+
+.filter-form {
+  max-width: 1100px;
+  margin: 0 auto;
+}
 </style>
