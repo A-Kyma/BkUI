@@ -1,0 +1,41 @@
+<template>
+  <div v-if="type==='dots'">
+    <div class="text-center">
+      <b-icon icon="three-dots" animation="cylon" :font-scale="fontScale"></b-icon>
+    </div>
+  </div>
+  <div v-else-if="type==='loading'">
+    <div class="text-center">LOADING</div>
+    <div class="text-center">
+      <b-spinner variant="dark" type="grow" label="Spinning"></b-spinner>
+      <b-spinner variant="warning" type="grow" label="Spinning"></b-spinner>
+      <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
+    </div>
+  </div>
+  <div v-else>
+    <div class="text-center">
+      <b-icon icon="circle-fill" animation="throb" :font-scale="fontScale"></b-icon>
+    </div>
+  </div>
+
+</template>
+
+<script>
+import {Class} from "meteor/akyma:astronomy"
+
+export default {
+  name: "BkLoading",
+  props: {
+    type: String,
+    variant: String,
+    fontScale: {
+      type: String,
+      default: "4"
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
