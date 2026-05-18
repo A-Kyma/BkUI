@@ -19,13 +19,7 @@ import { Class } from '../../bridge/context'
 export default {
   name: 'BkDatalistInput',
   props: {
-    model: {
-      type: Class || Object,
-      validator(value) {
-        if (!Class) return true
-        return value instanceof Class
-      }
-    },
+    model: Class,
     options: {
       type: Array,
       default() {

@@ -20,13 +20,7 @@ import { Class } from '../../bridge/context'
 export default {
   name: 'BkDropdown',
   props: {
-    model: {
-      type: Class || Object,
-      validator(value) {
-        if (!Class) return true
-        return value instanceof Class
-      }
-    },
+    model: Class,
     field: String,
     options: {
       type: Array,
