@@ -1,19 +1,16 @@
 <template>
   <label :class="computedClass">
     <t :options="context" :locale="locale">{{ label }}</t>
-    <QIcon name="fas fa-check" />
   </label>
 </template>
 
 <script>
 import { Class } from '../../bridge/context'
 import BkTranslate from '../translation/BkTranslate.vue'
-import { QIcon } from 'quasar'
 
 export default {
   name: 'BkLabel',
   components: {
-    QIcon,
     t: BkTranslate
   },
   props: {
