@@ -22,8 +22,7 @@
 </template>
 
 <script>
-import { Accounts, Meteor, EJSON, I18n, DateTime } from '../../bridge/context'
-import XlsExportTreatment from "../../../../lib/utils/XlsExportTreatment";
+import { Accounts, Meteor, EJSON, I18n, DateTime , XlsExportTreatment} from '../../bridge/context'
 import {writeFile} from 'xlsx/xlsx.mjs'
 import errorPopupMixin from '../../utils/errorPopupMixin'
 import BkButtonIcon from './BkButtonIcon.vue'

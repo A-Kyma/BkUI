@@ -19,6 +19,8 @@ let Accounts
 let EJSON
 let Tracker
 let toast
+let Languages
+let XlsExportTreatment
 
 const setBkUIContext = (deps = {}) => {
   if (deps.Bk) Bk = deps.Bk
@@ -62,6 +64,12 @@ const setBkUIContext = (deps = {}) => {
   if (deps.User) User = deps.User
   if (!User && Bk?.User) User = Bk.User
 
+  if (deps.Languages) Languages = deps.Languages
+  if (!Languages && Bk?.Languages) Languages = Bk.Languages
+
+  if (deps.XlsExportTreatment) XlsExportTreatment = deps.XlsExportTreatment
+  if (!XlsExportTreatment && Bk?.XlsExportTreatment) XlsExportTreatment = Bk.XlsExportTreatment
+
   if (deps.ValidationError) ValidationError = deps.ValidationError
   if (!ValidationError && Bk?.ValidationError) ValidationError = Bk.ValidationError
 
@@ -94,5 +102,7 @@ export {
   Tracker,
   toast,
   isClient,
-  setBkUIContext
+  setBkUIContext,
+  Languages,
+  XlsExportTreatment
 }

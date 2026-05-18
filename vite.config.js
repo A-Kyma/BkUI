@@ -14,6 +14,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['vue', 'quasar', 'vue-meteor-tracker'],
       output: {
+        exports: 'named',
         globals: {
           vue: 'Vue',
           quasar: 'Quasar',

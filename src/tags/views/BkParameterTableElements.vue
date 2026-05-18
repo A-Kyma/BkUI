@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
+import { Class } from "../../bridge/context";
 
 export default {
   name: "BkParameterTableElements",

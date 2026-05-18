@@ -65,11 +65,9 @@
         <div v-if="state === false" class="text-negative text-caption q-mt-xs" v-html="invalidFeedback"/>
       </div>
       <div v-else-if="canView" class="q-mb-md">
-        <template #label>
-          <slot :name="formGenericFieldComputed + '-label'" v-bind="$props">
-            <bk-label v-bind="{...$props,...$attrs}"/>
-          </slot>
-        </template>
+        <slot :name="formGenericFieldComputed + '-label'" v-bind="$props">
+          <bk-label v-bind="{...$props,...$attrs}"/>
+        </slot>
 
         <div v-if="description" class="text-caption text-grey-7 q-mb-xs">{{ description }}</div>
 

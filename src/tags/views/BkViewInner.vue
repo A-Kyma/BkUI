@@ -10,7 +10,7 @@
 </template>
 
 <script>
-  import {Class} from "meteor/akyma:astronomy"
+  import { Class } from "../../bridge/context";
   import BkLabel from "../forms/BkLabel.vue";
   import BkViewClean from "./BkViewClean.vue";
 

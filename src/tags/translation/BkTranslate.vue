@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { computed, inject, ref, useSlots } from 'vue'
+import { computed, ref, useSlots } from 'vue'
 //import { BKUI_SYMBOL } from '../../index'
 import { Class, I18n, Role, autorun, isClient, Meteor } from '../../bridge/context'
 

@@ -26,8 +26,7 @@
 </template>
 
 <script>
-import {Class} from "meteor/akyma:astronomy"
-import {I18n} from "meteor/akyma:bk"
+import { Class, I18n } from "../../bridge/context";
 
 export default {
   name: "BkParameterTables",

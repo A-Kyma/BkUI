@@ -169,7 +169,7 @@
             </q-checkbox>
           </form>
           <div class="h-divider"/>
-        </b-collapse>
+        </div>
 
         <div class="pt-3" id="result-import">
           <div v-if="error !== null">
@@ -241,13 +241,12 @@
         </template>
       </bk-modal>
     </slot>
-  </b-link>
+  </q-btn>
 </template>
 
 <script>
-import { Class } from "meteor/akyma:astronomy";
-import {Role,I18n,DateTime} from "meteor/akyma:bk"
-import errorPopupMixin from "../../../utils/errorPopupMixin";
+import { Class, Role, I18n, DateTime } from "../../bridge/context";
+import errorPopupMixin from "../../utils/errorPopupMixin";
 import * as XLSX from 'xlsx/xlsx.mjs';
 
 export default {

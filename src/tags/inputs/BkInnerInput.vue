@@ -191,7 +191,7 @@
 <script>
 import { Class, ValidationError, DateTime, I18n, Enum, Lifecycle } from '../../bridge/context'
 import _ from 'lodash'
-import { defineAsyncComponent } from 'vue'
+// import { defineAsyncComponent } from 'vue'
 import BkBelongsToInput from './BkBelongsToInput.vue'
 import BkFieldList from '../forms/BkFieldList.vue'
 import BkCardListClass from '../forms/BkCardListClass.vue'
@@ -513,7 +513,8 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
         if (fieldType === "TextEditor") {
           if (Meteor.isClient && this["for"]!== "view") {
             // Lazy load BkTextEditor to avoid Meteor bundling @tiptap deps
-            return defineAsyncComponent(() => import('./BkTextEditor.vue'));
+            //return defineAsyncComponent(() => import('./BkTextEditor.vue'));
+            return "BkTextEditor"
           } else {
             return "BkViewClean"
           }

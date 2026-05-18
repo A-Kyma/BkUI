@@ -211,7 +211,7 @@
 </template>
 
 <script>
-import { Class, ListField, Files, I18n, Tracker, Meteor } from '../../bridge/context'
+import { Class, ListField, Files, I18n, autorun, Meteor } from '../../bridge/context'
 import { Container, Draggable } from 'vue-smooth-dnd'
 import applyDrag from '../../utils/applyDrag'
 
@@ -334,7 +334,7 @@ export default {
       // Avoid meteor reactive data group that leads to a loop in recalculation,
       // So we use $autorun in a computed group
       const self=this;
-      return Tracker.autorun(() => {
+      return autorun(() => {
         let search = {
           _id: { $in: self.files },
         };

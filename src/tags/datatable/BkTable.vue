@@ -359,20 +359,16 @@
 </template>
 
 <script>
-  import { Tracker } from "meteor/tracker"
-  import { Class, ValidationError } from "meteor/akyma:astronomy";
+  import { autorun, Class, ValidationError, I18n, Datatable, EJSON } from "../../bridge/context";
   import _omit from "lodash/omit";
   import { Container, Draggable } from "vue-smooth-dnd";
-  import I18n from "../../../../lib/classes/i18n";
-  import Datatable from "../../../../lib/classes/datatable";
   import BkButtonIcon from "../links/BkButtonIcon.vue";
   import BkModal from "../modals/BkModal.vue";
   import BkForm from "../forms/BkForm.vue";
   import BkViewInner from "../views/BkViewInner.vue";
   import BkPagination from "./BkPagination.vue";
   import BkLoading from "../loading/BkLoading.vue";
-  import {EJSON} from "meteor/ejson";
-  import errorPopupMixin from "../../../utils/errorPopupMixin";
+  import errorPopupMixin from "../../utils/errorPopupMixin";
   import BkExportToXlsxButton from "../links/BkExportToXlsxButton.vue";
 
   export default {
@@ -463,7 +459,7 @@
     },
     created() {
       window.addEventListener("resize", this.onResize);
-      Tracker.autorun(() => {
+      autorun(() => {
         this.datatable.readydep.depend()
         if (!this.datatable.handler || this.datatable.handler.ready()) {
           this.items = this.datatable.getArray()

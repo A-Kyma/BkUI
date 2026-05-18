@@ -40,9 +40,8 @@
 </template>
 
 <script>
-  import { I18n, Meteor } from '../../bridge/context'
-  import Languages from "../../../../lib/modules/customFields/types/language";
-  import config from "../../../../lib/core/config";
+  import { I18n, Meteor, Languages } from '../../bridge/context'
+  import config from '../../utils/config';
 
 
   export default {

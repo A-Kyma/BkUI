@@ -1,7 +1,7 @@
 <template>
   <div class="q-mt-sm row q-gutter-sm items-center">
     <q-btn
-      v-if="for !== 'view' && !excludeButtons.includes('submit')"
+      v-if="$props['for'] !== 'view' && !excludeButtons.includes('submit')"
       type="submit"
       color="primary"
       outline
@@ -10,7 +10,7 @@
     </q-btn>
 
     <q-btn
-      v-if="for !== 'view' && !toast && !excludeButtons.includes('reset')"
+      v-if="$props['for'] !== 'view' && !toast && !excludeButtons.includes('reset')"
       type="reset"
       color="negative"
       outline

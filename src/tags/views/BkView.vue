@@ -9,7 +9,7 @@
 </template>
 
 <script>
-  import { Class } from "meteor/akyma:astronomy"
+  import { Class } from "../../bridge/context";
   import BkViewInner from "./BkViewInner.vue";
   export default {
     name: "BkView",
