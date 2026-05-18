@@ -26,10 +26,11 @@ import { Accounts, Meteor, EJSON, I18n, DateTime , XlsExportTreatment} from '../
 import {writeFile} from 'xlsx/xlsx.mjs'
 import errorPopupMixin from '../../utils/errorPopupMixin'
 import BkButtonIcon from './BkButtonIcon.vue'
+import { QBtn } from 'quasar'
 
 export default {
   name: "BkExportToXlsxButton",
-  components: {BkButtonIcon},
+  components: {BkButtonIcon, QBtn},
   mixins: [errorPopupMixin],
   props: {
     params: Object,

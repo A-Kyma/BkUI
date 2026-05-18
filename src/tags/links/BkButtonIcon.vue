@@ -248,9 +248,11 @@
 import { Class, Role, I18n, DateTime } from "../../bridge/context";
 import errorPopupMixin from "../../utils/errorPopupMixin";
 import * as XLSX from 'xlsx/xlsx.mjs';
+import { QBtn, QIcon, QInput, QCheckbox, QCard, QCardSection, QBanner, QBadge, QFile } from 'quasar'
 
 export default {
   name: "BkButtonIcon",
+  components: { QBtn, QIcon, QInput, QCheckbox, QCard, QCardSection, QBanner, QBadge, QFile },
   mixins: [errorPopupMixin],
   props: {
     icon: String,

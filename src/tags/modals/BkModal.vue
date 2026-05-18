@@ -36,9 +36,11 @@
 
 <script>
 import { Class } from '../../bridge/context'
+import { QDialog, QCard, QCardSection, QCardActions, QBtn } from 'quasar'
 
 export default {
   name: "BkModal",
+  components: { QDialog, QCard, QCardSection, QCardActions, QBtn },
   props: {
     id: String,
     model: Class,

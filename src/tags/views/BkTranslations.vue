@@ -49,6 +49,7 @@
 <script>
 import { I18n, Meteor } from '../../bridge/context'
 import {dump} from "js-yaml"
+import { QBtn, QInput, QInnerLoading, QSpinner } from 'quasar'
 
 function download(filename, text) {
   var element = document.createElement('a');
@@ -65,6 +66,7 @@ function download(filename, text) {
 
 export default {
   name: "BkTranslations",
+  components: { QBtn, QInput, QInnerLoading, QSpinner },
   props: {
     locales: {
       type: Array,

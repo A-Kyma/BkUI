@@ -191,6 +191,7 @@
 <script>
 import { Class, ValidationError, DateTime, I18n, Enum, Lifecycle , ObjectField, ListField, ScalarField} from '../../bridge/context'
 import _ from 'lodash'
+import { QCheckbox, QRadio, QField, QIcon, QBtn, QRating } from 'quasar'
 // import { defineAsyncComponent } from 'vue'
 import BkBelongsToInput from './BkBelongsToInput.vue'
 import BkFieldList from '../forms/BkFieldList.vue'
@@ -214,7 +215,7 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
 
   export default {
     name: "BkInnerInput",
-    components: {BkCardListClass, BkBelongsToInput,BkFieldList},
+    components: {BkCardListClass, BkBelongsToInput,BkFieldList, QCheckbox, QRadio, QField, QIcon, QBtn, QRating},
     props: {
       model: {
         type: Class,

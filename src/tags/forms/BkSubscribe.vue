@@ -19,10 +19,11 @@
 <script>
 import { Class, I18n, User, Meteor } from '../../bridge/context'
 import BkSubmit from './BkSubmit.vue'
+import { QLinearProgress, QBanner } from 'quasar'
 
 export default {
   name: 'BkSubscribe',
-  components: { BkSubmit },
+  components: { BkSubmit, QLinearProgress, QBanner },
   props: {
     model: Class,
     modal: String,

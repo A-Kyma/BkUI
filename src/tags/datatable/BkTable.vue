@@ -370,10 +370,11 @@
   import BkLoading from "../loading/BkLoading.vue";
   import errorPopupMixin from "../../utils/errorPopupMixin";
   import BkExportToXlsxButton from "../links/BkExportToXlsxButton.vue";
+  import { QBtn, QSlideTransition, QCard, QCardSection, QIcon } from 'quasar'
 
   export default {
     name: "BkTable",
-    components: {BkExportToXlsxButton, BkPagination, BkButtonIcon,BkModal,BkForm,BkViewInner,Container,Draggable },
+    components: {BkExportToXlsxButton, BkPagination, BkButtonIcon,BkModal,BkForm,BkViewInner,Container,Draggable, QBtn, QSlideTransition, QCard, QCardSection, QIcon},
     mixins: [errorPopupMixin],
     props: {
       fields: [Array,String],

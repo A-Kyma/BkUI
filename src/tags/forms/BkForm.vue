@@ -49,10 +49,11 @@
 import { Class, I18n } from '../../bridge/context'
 import BkFieldList from './BkFieldList.vue'
 import BkSubmit from './BkSubmit.vue'
+import { QLinearProgress, QBanner } from 'quasar'
 
 export default {
     name: "BkForm",
-    components: {BkFieldList,BkSubmit},
+  components: {BkFieldList,BkSubmit, QLinearProgress, QBanner},
     props: {
       model: [String,Class],
       inline: Boolean,

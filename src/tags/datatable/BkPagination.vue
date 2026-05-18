@@ -33,8 +33,11 @@
  * used only in the datatable component
  * ex: <bk-pagination :datatable="datatable" :scroll="scroll" :perPage="perPage" :updateRoute="updateRoute" :count="count"/>
  */
+import { QBtn, QPagination } from 'quasar'
+
 export default {
   name: 'BkPagination',
+  components: { QBtn, QPagination },
   props: {
     // Datatable object (init from datatable.js). can be find in `'%root%/lib/classes'`
     datatable: {

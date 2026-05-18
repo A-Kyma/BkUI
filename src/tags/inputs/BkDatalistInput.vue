@@ -15,9 +15,11 @@
 
 <script>
 import { Class } from '../../bridge/context'
+import { QInput } from 'quasar'
 
 export default {
   name: 'BkDatalistInput',
+  components: { QInput },
   props: {
     model: Class,
     options: {

@@ -16,9 +16,11 @@
 
 <script>
 import { Class } from '../../bridge/context'
+import { QBtnDropdown, QList, QItem, QItemSection } from 'quasar'
 
 export default {
   name: 'BkDropdown',
+  components: { QBtnDropdown, QList, QItem, QItemSection },
   props: {
     model: Class,
     field: String,

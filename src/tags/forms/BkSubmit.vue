@@ -33,8 +33,11 @@
 </template>
 
 <script>
+import { QBtn } from 'quasar'
+
 export default {
   name: 'BkSubmit',
+  components: { QBtn },
   props: {
     for: String,
     toast: Boolean,

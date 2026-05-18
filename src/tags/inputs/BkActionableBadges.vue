@@ -44,10 +44,12 @@
 </template>
 
 <script>
+import { QBadge } from 'quasar';
 import { Class } from '../../bridge/context'
 
 export default {
   name: 'BkActionableBadges',
+  components: {QBadge},
   props: {
     model: Class,
     field: String,

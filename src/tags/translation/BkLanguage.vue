@@ -42,10 +42,12 @@
 <script>
   import { I18n, Meteor, Languages } from '../../bridge/context'
   import config from '../../utils/config';
+  import { QBtnDropdown, QList, QItem, QItemSection, QBtn } from 'quasar'
 
 
   export default {
     name: "BkLanguage",
+    components: { QBtnDropdown, QList, QItem, QItemSection, QBtn },
     props: {
       view: {
         type: String,

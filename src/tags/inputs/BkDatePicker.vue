@@ -33,9 +33,11 @@
 
 <script>
 import { Class, DateTime, I18n } from '../../bridge/context'
+import { QDate, QInput } from 'quasar'
 
 export default {
   name: "BkDatePicker",
+  components: { QDate, QInput },
   props: {
     state: Boolean,
     for: String,

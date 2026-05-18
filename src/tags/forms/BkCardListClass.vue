@@ -147,10 +147,11 @@ import BkInput from "../inputs/BkInput.vue";
 import BkViewClean from "../views/BkViewClean.vue";
 import { Container, Draggable } from "vue-smooth-dnd";
 import applyDrag from "../../utils/applyDrag";
+import { QSelect, QItem, QItemSection, QInput, QBtn, QCard, QCardSection } from 'quasar'
 
 export default {
     name: "BkCardListClass",
-  components: {BkButtonIcon,BkFieldList,BkInput,BkViewClean,Container,Draggable},
+  components: {BkButtonIcon,BkFieldList,BkInput,BkViewClean,Container,Draggable, QSelect, QItem, QItemSection, QInput, QBtn, QCard, QCardSection},
     props: {
       model: Class,
       field: String,

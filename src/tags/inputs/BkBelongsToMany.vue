@@ -120,9 +120,11 @@
 <script>
 import { Class, I18n } from '../../bridge/context'
 import relationSubscriptionMixin from '../../utils/relationSubscriptionMixin'
+import { QRadio, QSelect, QItem, QItemSection, QChip, QBtn } from 'quasar'
 
 export default {
   name: "BkBelongsToMany",
+  components: { QRadio, QSelect, QItem, QItemSection, QChip, QBtn },
   mixins: [relationSubscriptionMixin],
   props: {
     taggable: {

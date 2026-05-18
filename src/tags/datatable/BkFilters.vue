@@ -29,8 +29,11 @@
 </template>
 
 <script>
+import { QForm, QInput, QSelect, QBtn } from 'quasar'
+
 export default {
   name: 'BkFilters',
+  components: { QForm, QInput, QSelect, QBtn },
   data() {
     return {
       statusOptions: [

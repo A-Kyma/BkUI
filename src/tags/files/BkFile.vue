@@ -214,10 +214,11 @@
 import { Class, ListField, Files, I18n, autorun, Meteor } from '../../bridge/context'
 import { Container, Draggable } from 'vue-smooth-dnd'
 import applyDrag from '../../utils/applyDrag'
+import { QDialog, QCard, QBtn, QImg, QIcon, QAvatar, QFile, QInnerLoading, QSpinner, QList, QItem, QLinearProgress } from 'quasar'
 
 export default {
   name: "BkFile",
-  components: {Container,Draggable},
+  components: {Container,Draggable, QDialog, QCard, QBtn, QImg, QIcon, QAvatar, QFile, QInnerLoading, QSpinner, QList, QItem, QLinearProgress},
   props: {
     placeholder: String,
     dropPlaceholder: { type: String, default: "app.file.drop"},

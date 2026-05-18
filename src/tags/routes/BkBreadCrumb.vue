@@ -10,8 +10,11 @@
     </q-breadcrumbs>
 </template>
 <script>
+import { QBreadcrumbs, QBreadcrumbsEl, QIcon } from 'quasar'
+
 export default {
     name: 'BkBreadCrumb',
+    components: { QBreadcrumbs, QBreadcrumbsEl, QIcon },
     computed: {
         routeArray() {
             if (!this.$route?.matched?.length) return []

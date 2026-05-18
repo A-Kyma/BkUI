@@ -36,9 +36,11 @@
 import _ from 'lodash'
 import { I18n } from '../../bridge/context'
 import relationSubscriptionMixin from '../../utils/relationSubscriptionMixin'
+import { QSelect, QItem, QItemSection } from 'quasar'
 
 export default {
   name: 'BkBelongsToInput',
+  components: { QSelect, QItem, QItemSection },
   mixins: [relationSubscriptionMixin],
   props: {
     placeholder: String

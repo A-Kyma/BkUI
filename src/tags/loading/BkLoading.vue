@@ -16,8 +16,11 @@
 </template>
 
 <script>
+import { QSpinner, QSpinnerDots } from 'quasar'
+
 export default {
   name: 'BkLoading',
+  components: { QSpinner, QSpinnerDots },
   props: {
     type: String,
     variant: String,

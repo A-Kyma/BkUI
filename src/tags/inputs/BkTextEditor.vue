@@ -23,8 +23,11 @@
 </template>
 
 <script>
+import { QEditor } from 'quasar'
+
 export default {
   name: 'BkTextEditor',
+  components: { QEditor },
   emits: ['input', 'update:modelValue'],
   props: {
     // Keep `value` for backward compatibility with Vue2 and `v-model` usage
