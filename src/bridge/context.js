@@ -8,7 +8,9 @@ let Meteor
 let isClient
 let Datatable
 let Lifecycle
+let ObjectField
 let ListField
+let ScalarField
 let Enum
 let DateTime
 let Files
@@ -44,12 +46,18 @@ const setBkUIContext = (deps = {}) => {
 
   if (deps.Lifecycle) Lifecycle = deps.Lifecycle
   if (!Lifecycle && Bk?.Lifecycle) Lifecycle = Bk.Lifecycle
+
+  if (deps.ObjectField) ObjectField = deps.ObjectField
+  if (!ObjectField && Bk?.ObjectField) ObjectField = Bk.ObjectField
   
   if (deps.Enum) Enum = deps.Enum
   if (!Enum && Bk?.Enum) Enum = Bk.Enum
 
   if (deps.ListField) ListField = deps.ListField
   if (!ListField && Bk?.ListField) ListField = Bk.ListField
+
+  if (deps.ScalarField) ScalarField = deps.ScalarField
+  if (!ScalarField && Bk?.ScalarField) ScalarField = Bk.ScalarField
 
   if (deps.DateTime) DateTime = deps.DateTime
   if (!DateTime && Bk?.DateTime) DateTime = Bk.DateTime
@@ -88,8 +96,10 @@ export {
   Meteor,
   Datatable,
   Lifecycle,
+  ObjectField,
   Enum,
   ListField,
+  ScalarField,
   DateTime,
   Files,
   Filter,

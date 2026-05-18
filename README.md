@@ -28,28 +28,18 @@ meteor npm install
 import BkUI from '@akyma/bk-ui'
 import { Meteor } from 'meteor/meteor'
 import * as Bk from 'meteor/akyma:bk'
+import {Class, ObjectField, ListField, ScalarField, ValidationError} from "meteor/akyma:astronomy"
 import { EJSON } from 'meteor/ejson'
 import { Accounts } from 'meteor/accounts-base'
 
 app.use(BkUI, {
   Bk,
-  Meteor: {
-    ...Meteor,
-    isClient: () => Meteor.isClient
-  }
-})
-
-```
-
-`BkUI` recovers `Class`, `I18n`, `Role`, `Datatable`, `ValidationError`, `Languages`, and `XlsExportTreatment` from `Bk` when available, so passing `Bk` is usually enough.
-
-If you need to override or inject specific dependencies explicitly, you can still do:
-
-```js
-app.use(BkUI, {
-  Bk,
   Meteor,
   Class,
+  ObjectField,
+  ListField,
+  ScalarField,
+  ValidationError,
   Accounts,
   EJSON
 })

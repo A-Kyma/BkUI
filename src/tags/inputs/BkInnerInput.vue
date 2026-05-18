@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import { Class, ValidationError, DateTime, I18n, Enum, Lifecycle } from '../../bridge/context'
+import { Class, ValidationError, DateTime, I18n, Enum, Lifecycle , ObjectField, ListField, ScalarField} from '../../bridge/context'
 import _ from 'lodash'
 // import { defineAsyncComponent } from 'vue'
 import BkBelongsToInput from './BkBelongsToInput.vue'
