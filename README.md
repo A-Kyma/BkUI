@@ -25,15 +25,34 @@ meteor npm install
 3. Use in the app:
 
 ```js
-import BkUI, { Class } from '@akyma/bk-ui'
-import { autorun } from 'vue-meteor-tracker'
-import { Role, I18n, Bk } from 'meteor/akyma:bk'
-import { useQuasar } from 'quasar'
+import BkUI from '@akyma/bk-ui'
+import { Meteor } from 'meteor/meteor'
+import * as Bk from 'meteor/akyma:bk'
+import { EJSON } from 'meteor/ejson'
+import { Accounts } from 'meteor/accounts-base'
 
-app.use(BkUI, {Bk, Meteor, I18n, Role, Class})
-// or
-app.use(BkUI, {Bk, Meteor, isClient: () => Meteor.isClient, I18n, Role, Class})
+app.use(BkUI, {
+  Bk,
+  Meteor: {
+    ...Meteor,
+    isClient: () => Meteor.isClient
+  }
+})
 
+```
+
+`BkUI` recovers `Class`, `I18n`, `Role`, `Datatable`, `ValidationError`, `Languages`, and `XlsExportTreatment` from `Bk` when available, so passing `Bk` is usually enough.
+
+If you need to override or inject specific dependencies explicitly, you can still do:
+
+```js
+app.use(BkUI, {
+  Bk,
+  Meteor,
+  Class,
+  Accounts,
+  EJSON
+})
 ```
 
 ## Build
@@ -48,3 +67,4 @@ npm run build
 
 - `BkTranslate` and `BkLabel` do **not** import Meteor packages directly.
 - Provide Meteor dependencies via `app.use(BkUI, { ... })`.
+- Pass a `Meteor` object exposing `isClient()` to stay compatible with current component usage.

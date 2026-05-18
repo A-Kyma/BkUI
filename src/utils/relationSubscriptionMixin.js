@@ -1,4 +1,4 @@
-import { I18n, Meteor, Tracker, Class, ListField } from '../bridge/context'
+import { I18n, Meteor, autorun, Class, ListField } from '../bridge/context'
 import errorPopupMixin from './errorPopupMixin'
 
 const isNil = (v) => v === null || v === undefined
@@ -340,7 +340,7 @@ export default {
           this.readonly
         )
 
-        const run = Tracker?.autorun
+        const run = autorun
         if (typeof run === 'function') {
           run(() => {
             if (this.handler?.ready?.()) {

@@ -55,7 +55,6 @@ import {
   ValidationError,
   Accounts,
   EJSON,
-  Tracker,
   toast
 } from './bridge/context'
 
@@ -118,7 +117,6 @@ const createBkUI = (options = {}) => {
     ValidationError: null,
     Accounts: null,
     EJSON: null,
-    Tracker: null,
     isClient: null,
     toast: null
   }
@@ -200,7 +198,6 @@ export {
   ValidationError,
   Accounts,
   EJSON,
-  Tracker,
   toast
 }
 export default BkUI

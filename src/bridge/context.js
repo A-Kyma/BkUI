@@ -17,7 +17,6 @@ let User
 let ValidationError
 let Accounts
 let EJSON
-let Tracker
 let toast
 let Languages
 let XlsExportTreatment
@@ -75,7 +74,6 @@ const setBkUIContext = (deps = {}) => {
 
   if (deps.Accounts) Accounts = deps.Accounts
   if (deps.EJSON) EJSON = deps.EJSON
-  if (deps.Tracker) Tracker = deps.Tracker
 
   if (deps.toast) toast = deps.toast
 }
@@ -99,7 +97,6 @@ export {
   ValidationError,
   Accounts,
   EJSON,
-  Tracker,
   toast,
   isClient,
   setBkUIContext,
