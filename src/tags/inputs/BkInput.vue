@@ -32,8 +32,8 @@
               @select="$emit('select',$event)"
               @tag="$emit('tag',$event)"
           >
-            <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-              <slot :name="slot" v-bind="props" />
+            <template v-for="slotName in forwardedSlotNames" v-slot:[slotName]="props">
+              <slot :name="slotName" v-bind="props || {}" />
             </template>
           </bk-inner-input>
 
@@ -41,11 +41,11 @@
         </q-card-section>
       </q-expansion-item>
       <div v-else-if="ui.basic" class="q-mb-sm">
-        <div class="col-12 basic-group" :class="accordionGroupId" :id="field">
+        <!-- <div class="col-12 basic-group" :class="accordionGroupId" :id="field">
           <slot :name="formFieldComputed + '-label'" v-bind="$props">
             <bk-label v-bind="$props" noRequired/>
           </slot>
-        </div>
+        </div> -->
         <bk-inner-input
                 v-bind="{...$parent.$attrs,...$props, ...$attrs}"
                 @state="onState"
@@ -56,8 +56,14 @@
                 @tag="$emit('tag',$event)"
                 :model="inputModel">
 
-          <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-            <slot :name="slot" v-bind="props" />
+          <template #label>
+            <slot :name="formFieldComputed + '-label'" v-bind="$props">
+              <bk-label v-bind="$props" noRequired/>
+            </slot>
+          </template>
+
+          <template v-for="slotName in forwardedSlotNames" v-slot:[slotName]="props">
+            <slot :name="slotName" v-bind="props || {}" />
           </template>
 
         </bk-inner-input>
@@ -65,11 +71,11 @@
         <div v-if="state === false" class="text-negative text-caption q-mt-xs" v-html="invalidFeedback"/>
       </div>
       <div v-else-if="canView" class="q-mb-md">
-        <slot :name="formGenericFieldComputed + '-label'" v-bind="$props">
+        <!-- <slot :name="formGenericFieldComputed + '-label'" v-bind="$props">
           <bk-label v-bind="{...$props,...$attrs}"/>
-        </slot>
+        </slot> -->
 
-        <div v-if="description" class="text-caption text-grey-7 q-mb-xs">{{ description }}</div>
+        <!-- <div v-if="description" class="text-caption text-grey-7 q-mb-xs">{{ description }}</div> -->
 
         <bk-inner-input
             v-bind="{...$parent.$attrs,...$props, ...$attrs}"
@@ -78,10 +84,17 @@
             @input="$emit('input')"
             @select="$emit('select',$event)"
             @tag="$emit('tag',$event)"
-            :model="inputModel">
+            :model="inputModel"
+            :hint="description">
 
-          <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-            <slot :name="slot" v-bind="props" />
+          <template #label>
+            <slot :name="formGenericFieldComputed + '-label'" v-bind="$props">
+              <bk-label v-bind="{...$props,...$attrs}"/>
+            </slot>
+          </template>
+
+          <template v-for="slotName in forwardedSlotNames" v-slot:[slotName]="props">
+            <slot :name="slotName" v-bind="props || {}" />
           </template>
 
         </bk-inner-input>
@@ -95,11 +108,12 @@
 <script>
   import { Class, I18n } from '../../bridge/context'
   import _ from 'lodash'
+  import { QExpansionItem, QItemSection, QCardSection } from 'quasar'
   import BkLabel from '../forms/BkLabel.vue'
 
   export default {
     name: "BkInput",
-    components: {BkLabel},
+    components: {BkLabel, QExpansionItem, QItemSection, QCardSection},
     props: {
       model: {
         type: Class,
@@ -126,6 +140,16 @@
 
     /* Use of meteor instead of computed here implies version 2+ of vue-meteor-tracker */
     computed: {
+      slot() {
+        return this.$slots;
+      },
+      forwardedSlotNames() {
+        return Object.keys(this.$slots || {}).filter((name) => {
+          if (name === 'default' || name === 'label') return false
+          if (name.startsWith('_') || name.startsWith('$')) return false
+          return typeof this.$slots[name] === 'function'
+        })
+      },
       // model from props or injection
       inputModel() {
         return this.model || this.formModel;
@@ -175,9 +199,9 @@
         } else {
           return this.model.constructor.getName()+'_' + this._uid;
         }
-      }
-    },
-    meteor: {
+      },
+    // },
+    // meteor: {
       description() {
         if (this.plaintext) return
         if (this.model.constructor.parentClassName === "ParameterTableElement")

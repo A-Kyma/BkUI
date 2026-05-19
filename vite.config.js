@@ -5,6 +5,8 @@ import path from 'node:path'
 export default defineConfig({
   plugins: [vue()],
   build: {
+    sourcemap: true,
+    emptyOutDir: false,
     lib: {
       entry: path.resolve(__dirname, 'src/index.js'),
       name: 'BkUI',

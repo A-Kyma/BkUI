@@ -22,8 +22,8 @@
               :form-field="formFieldComputed"
               @change="$emit('change')"
               fields="">
-        <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-          <slot :name="slot" v-bind="props" />
+        <template v-for="slotName in forwardedSlotNames" v-slot:[slotName]="props">
+          <slot :name="slotName" v-bind="props || {}" />
         </template>
       </bk-field-list>
 
@@ -33,8 +33,8 @@
           :model="model"
           :field="field"
           :form-field="formFieldComputed">
-        <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-          <slot :name="slot" v-bind="props" />
+        <template v-for="slotName in forwardedSlotNames" v-slot:[slotName]="props">
+          <slot :name="slotName" v-bind="props || {}" />
         </template>
       </bk-card-list-class>
 
@@ -59,7 +59,7 @@
       So we need to set name attribute as different value for each radio-group
       -->
       <div
-          v-else-if="inputComponent === 'BFormRadioGroup' && definitionField === 'Enum'"
+          v-else-if="inputComponent === 'QOptionGroup' && definitionField === 'Enum'"
           class="q-gutter-md bk-plaintext"
           :key="formFieldComputed">
         <q-radio
@@ -121,8 +121,8 @@
           @ready="$emit('ready')"
           @tag="$emit('tag',$event)"
       >
-        <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-          <slot :name="slot" v-bind="props" />
+        <template v-for="slotName in forwardedSlotNames" v-slot:[slotName]="props">
+          <slot :name="slotName" v-bind="props || {}" />
         </template>
       </bk-belongs-to-many>
 
@@ -142,8 +142,8 @@
         @ready="$emit('ready')"
         @tag="$emit('tag',$event)"
       >
-        <template v-for="(_, slot) in $scopedSlots" v-slot:[slot]="props">
-          <slot :name="slot" v-bind="props" />
+        <template v-for="slotName in forwardedSlotNames" v-slot:[slotName]="props">
+          <slot :name="slotName" v-bind="props || {}" />
         </template>
       </bk-belongs-to-many>
       <!-- TODO: is span OK ?-->
@@ -167,19 +167,31 @@
           :field="field"
           :state="state"
           :for="$props['for']"
+          :label="label"
+          :hint="hint"
           :placeholder="placeholder"
           :name="field"
           :plaintext="plaintextComputed"
           :readonly="plaintextComputed"
           :disabled="plaintextComputed"
           :options="enumOptions"
+          :label-slot="hasLabelSlot"
           :switch="uiSwitch"
           :max-tags="maxTags"
           :debounce="debounce"
           :step="step"
           rows="3"
           max-rows="8"
-      />
+      >
+        <template v-if="hasLabelSlot" #label="props">
+          <slot name="label" v-bind="props || {}" />
+        </template>
+
+        <template v-for="slotName in forwardedSlotNames" v-slot:[slotName]="props">
+          <slot :name="slotName" v-bind="props || {}" />
+        </template>
+        
+      </component>
 
     </slot>
 
@@ -191,7 +203,7 @@
 <script>
 import { Class, ValidationError, DateTime, I18n, Enum, Lifecycle , ObjectField, ListField, ScalarField} from '../../bridge/context'
 import _ from 'lodash'
-import { QCheckbox, QRadio, QField, QIcon, QBtn, QRating } from 'quasar'
+import { QCheckbox, QRadio, QField, QIcon, QBtn, QRating, QInput, QOptionGroup } from 'quasar'
 // import { defineAsyncComponent } from 'vue'
 import BkBelongsToInput from './BkBelongsToInput.vue'
 import BkFieldList from '../forms/BkFieldList.vue'
@@ -215,7 +227,7 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
 
   export default {
     name: "BkInnerInput",
-    components: {BkCardListClass, BkBelongsToInput,BkFieldList, QCheckbox, QRadio, QField, QIcon, QBtn, QRating},
+    components: {BkCardListClass, BkBelongsToInput,BkFieldList, QCheckbox, QRadio, QField, QIcon, QBtn, QRating, QInput, QOptionGroup},
     props: {
       model: {
         type: Class,
@@ -235,6 +247,12 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
       for: String,
       plaintext: Boolean,
       showAlert: Boolean,
+      label: String,
+      hint: String,
+      debugSlots: {
+        type: Boolean,
+        default: false
+      },
       noState: {
         type: Boolean,
         default: false
@@ -255,6 +273,7 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
     },
     mounted() {
       this.isMounted = true;
+      this.logSlotDebug('mounted')
     },
     unmounted() {
       this.isMounted = false;
@@ -270,6 +289,9 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
     },
 
     computed: {
+      hasLabelSlot() {
+        return Boolean(this.$slots?.label)
+      },
       value: {
         set: function (value) {
           let validateServerSide = this.definition.validateServerSide || this.validateServerSide
@@ -287,6 +309,13 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
           }
           return v
         }
+      },
+      forwardedSlotNames() {
+        return Object.keys(this.$slots || {}).filter((name) => {
+          if (name === 'default' || name === 'label') return false
+          if (name.startsWith('_') || name.startsWith('$')) return false
+          return typeof this.$slots[name] === 'function'
+        })
       },
       definition() {
         let fieldDefinition = this.model.getDefinition(this.field);
@@ -443,7 +472,7 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
         }
       },
       inputType() {
-        if (this.inputComponent === "BFormInput") {
+        if (this.inputComponent === "QInput") {
           let fieldDefinition = this.model.getDefinition(this.field);
           let fieldType = fieldDefinition.type.name;
 
@@ -490,7 +519,7 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
         let fieldClass = fieldDefinition.type.class;
 
         if (isGenericInputType(fieldType) || fieldType === "String" || fieldType === "TrimmedString") {
-          return "BFormInput";
+          return "QInput";
         }
 
         /*
@@ -554,41 +583,21 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
           return defaultClass + " overflow-scroll-x"
         return defaultClass
       },
-    },
+    //},
 
-    methods: {
-      tagValidator(tag) {
-        let model = new (this.model.constructor)();
-        model.set(this.field,[tag]); // tag is in an array
-        try {
-          model.validate({fields: this.field})
-        } catch(err) {
-          if (ValidationError.is(err)) {
-            //TODO should be managed by I18n
-            this.invalidTagText = err.details[0].message;
-            return false
-          }
-        }
-        return true;
-      },
-      onPaste(e) {
-        if (this.ui.preventPaste) e.preventDefault();
-      }
-    },
-
-    meteor: {
+    // meteor: {
       placeholder() {
         if (this.plaintextComputed) return ""
         return I18n.t(this.model.constructor.getPlaceHolderKey(this.field),{ignoreNotFound: true});
       },
       append() {
-        let append = this.ui.append;
+        let append = this.ui?.append;
         if (typeof append === "function") append = append({model:this.model, doc:this.model, parent: this.formModel, field:this.field});
         if (append && append.includes(".")) return I18n.t(append);
         return append;
       },
       prepend() {
-        let prepend = this.ui.prepend;
+        let prepend = this.ui?.prepend;
         if (typeof prepend === "function") prepend = prepend({model:this.model, doc:this.model, parent: this.formModel, field:this.field});
         if (prepend && prepend.includes(".")) return I18n.t(prepend);
         return prepend;
@@ -655,6 +664,37 @@ import BkCardListClass from '../forms/BkCardListClass.vue'
             return true
           }
         }
+      }
+      
+    },
+    methods: {
+      logSlotDebug(phase) {
+        if (!this.debugSlots) return
+        const names = Object.keys(this.$slots || {})
+        console.log('[BkInnerInput][' + phase + '] inputComponent=', this.inputComponent, 'slots=', names)
+      },
+      logLabelSlotProps(slotProps) {
+        if (this.debugSlots) {
+          console.log('[BkInnerInput][label slotProps]', slotProps)
+        }
+        return ''
+      },
+      tagValidator(tag) {
+        let model = new (this.model.constructor)();
+        model.set(this.field,[tag]); // tag is in an array
+        try {
+          model.validate({fields: this.field})
+        } catch(err) {
+          if (ValidationError.is(err)) {
+            //TODO should be managed by I18n
+            this.invalidTagText = err.details[0].message;
+            return false
+          }
+        }
+        return true;
+      },
+      onPaste(e) {
+        if (this.ui.preventPaste) e.preventDefault();
       }
     },
   }
